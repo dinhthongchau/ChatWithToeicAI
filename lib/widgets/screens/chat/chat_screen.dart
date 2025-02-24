@@ -30,7 +30,9 @@ class _ChatScreenState extends State<ChatScreen> {
           title: Row(
             children: [
               Text('Chat with TOEIC AI'),
-              Icon(Icons.add)
+              IconButton(icon: Icon(Icons.add),onPressed: ()=> {
+                context.read<ChatProvider>().startNewSession()
+              })
             ],
           ),
 
