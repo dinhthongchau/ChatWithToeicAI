@@ -29,13 +29,15 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Consumer<ChatProvider>(
               builder: (context, chatProvider, child) {
                 return ListView.builder(
+                  padding: EdgeInsets.all(25),
                   itemCount: chatProvider.messages.length,
                   itemBuilder: (context, index) {
                     bool isUserMessage = index.isEven;
                     return Container(
-                        alignment: isUserMessage ? Alignment.centerRight : Alignment.topLeft,
+                        color:  isUserMessage ?  Colors.green : Colors.grey,
+                        alignment: isUserMessage ? Alignment.centerRight : Alignment.center,
                         child: Text(chatProvider.messages[index],
-                        style: TextStyle(fontSize: 16),),
+                        style: TextStyle(fontSize: 18),),
                     );
                   },
                 );
