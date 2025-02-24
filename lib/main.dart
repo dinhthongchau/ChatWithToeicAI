@@ -2,6 +2,7 @@ import 'package:ct312hm01_temp/models/chat_model.dart';
 import 'package:ct312hm01_temp/widgets/screens/chat/chat_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'routes.dart';
 import 'widgets/screens/chat/chat_screen.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +20,9 @@ class MyApp extends StatelessWidget {
       create: (_) =>ChatProvider(chatModel),
       child: MaterialApp(
         title: 'Chat with TOEIC AI',
-        home: ChatScreen(),
+        debugShowCheckedModeBanner: false,
+        onGenerateRoute: mainRoute,
+        initialRoute: ChatScreen.route,
       ),
     );
   }

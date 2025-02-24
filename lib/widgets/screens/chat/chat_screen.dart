@@ -1,9 +1,12 @@
+import 'package:ct312hm01_temp/common/enum/load_status.dart';
+import 'package:ct312hm01_temp/widgets/screens/chat_history/chat_history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'chat_provider.dart';
 
 class ChatScreen extends StatefulWidget {
   static const String route = "/chat";
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -22,25 +25,40 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Chat with TOEIC AI')),
+      appBar: AppBar(
+          leading: IconButton( onPressed: ()=> Navigator.of(context).pushNamed(ChatHistoryScreen.route),icon:  Icon(Icons.history)),
+          title: Row(
+            children: [
+              Text('Chat with TOEIC AI'),
+              Icon(Icons.add)
+            ],
+          ),
+
+      ),
       body: Column(
         children: [
           Expanded(
             child: Consumer<ChatProvider>(
               builder: (context, chatProvider, child) {
-                return ListView.builder(
-                  padding: EdgeInsets.all(25),
-                  itemCount: chatProvider.messages.length,
-                  itemBuilder: (context, index) {
-                    bool isUserMessage = index.isEven;
-                    return Container(
-                        color:  isUserMessage ?  Colors.green : Colors.grey,
-                        alignment: isUserMessage ? Alignment.centerRight : Alignment.center,
-                        child: Text(chatProvider.messages[index],
-                        style: TextStyle(fontSize: 18),),
-                    );
-                  },
-                );
+                return chatProvider.loadStatus == LoadStatus.Loading
+                    ? Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        padding: EdgeInsets.all(25),
+                        itemCount: chatProvider.messages.length,
+                        itemBuilder: (context, index) {
+                          bool isUserMessage = index.isEven;
+                          return Container(
+                            color: isUserMessage ? Colors.green : Colors.grey,
+                            alignment: isUserMessage
+                                ? Alignment.centerRight
+                                : Alignment.center,
+                            child: Text(
+                              chatProvider.messages[index],
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          );
+                        },
+                      );
               },
             ),
           ),
