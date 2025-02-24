@@ -1,25 +1,22 @@
-// widgets/screens/chat/chat_screen.dart
 import 'package:flutter/material.dart';
-import '../../../models/chat_model.dart';
-
+import 'package:provider/provider.dart';
+import 'chat_provider.dart';
 
 class ChatScreen extends StatefulWidget {
+  static const String route = "/chat";
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
-  final ChatModel chatModel = ChatModel('AIzaSyA6eb5jge_GI5NS29exFS7mfZj4RHrcAsY');
-  String _response = '';
 
-  void _sendMessage() async {
-    String input = _controller.text;
-    String? response = await chatModel.generateResponse(input);
-    setState(() {
-      _response = response!;
-    });
-    _controller.clear();
+  void _sendMessage() {
+    final message = _controller.text;
+    if (message.isNotEmpty) {
+      context.read<ChatProvider>().addMessage(message);
+      _controller.clear();
+    }
   }
 
   @override
@@ -28,7 +25,23 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(title: Text('Chat with TOEIC AI')),
       body: Column(
         children: [
-          Expanded(child: SingleChildScrollView(child: Text(_response))),
+          Expanded(
+            child: Consumer<ChatProvider>(
+              builder: (context, chatProvider, child) {
+                return ListView.builder(
+                  itemCount: chatProvider.messages.length,
+                  itemBuilder: (context, index) {
+                    bool isUserMessage = index.isEven;
+                    return Container(
+                        alignment: isUserMessage ? Alignment.centerRight : Alignment.topLeft,
+                        child: Text(chatProvider.messages[index],
+                        style: TextStyle(fontSize: 16),),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -36,7 +49,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: InputDecoration(hintText: 'Type your message here...'),
+                    decoration: InputDecoration(hintText: 'Type a message'),
                   ),
                 ),
                 IconButton(
