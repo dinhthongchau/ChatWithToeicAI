@@ -6,9 +6,9 @@ Student ID 1: B2111955
 
 Student Name 1: Chau Dinh Thong
 
-Student ID 1: ...
+Student ID 2: ...
 
-Student Name 1: Nguyen Nhat Hao 
+Student Name 2: Nguyen Nhat Hao 
 
 
 Class Number: M01
