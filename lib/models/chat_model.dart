@@ -1,5 +1,4 @@
 // models/chat_model.dart
-import 'dart:io';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 class ChatModel {
