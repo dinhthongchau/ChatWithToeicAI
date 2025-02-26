@@ -1,5 +1,6 @@
 import 'package:ct312hm01_temp/models/chat_model.dart';
 import 'package:ct312hm01_temp/widgets/screens/chat/chat_provider.dart';
+import 'package:ct312hm01_temp/widgets/screens/setting/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
@@ -20,13 +21,28 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     String apiKey = 'AIzaSyA6eb5jge_GI5NS29exFS7mfZj4RHrcAsY';
     final chatModel = ChatModel(apiKey);
-    return ChangeNotifierProvider(
-      create: (_) =>ChatProvider(chatModel),
-      child: MaterialApp(
-        title: 'Chat with TOEIC AI',
-        debugShowCheckedModeBanner: false,
-        onGenerateRoute: mainRoute,
-        initialRoute: ChatScreen.route,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => ChatProvider(chatModel),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ThemeProvider(),
+        )
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            title: 'Chat with TOEIC AI',
+            theme: ThemeData.light(),
+            darkTheme: ThemeData.dark(),
+            themeMode: themeProvider.isLightTheme ? ThemeMode.light : ThemeMode.dark,
+            debugShowCheckedModeBanner: false,
+            onGenerateRoute: mainRoute,
+            initialRoute: ChatScreen.route,
+          );
+        },
+
       ),
     );
   }
