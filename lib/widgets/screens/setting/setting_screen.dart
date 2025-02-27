@@ -11,26 +11,24 @@ class SettingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: Icon(Icons.arrow_back)),
-      ),
-      bottomNavigationBar:
-          IconButton(onPressed: () {
-
-            Navigator.of(context).pushNamed(ChatScreen.route);
-          }, icon: Icon(Icons.home_outlined)),
-      body: Column(
-
-        children: [
-          ThemeModeChange(),
-          NavigateToGuideScreen()
-        ],
+    return Container(
+      width: double.infinity,
+      child: AlertDialog(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("Settings"),
+            IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: Icon(Icons.close)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [ThemeModeChange(), NavigateToGuideScreen()],
+        ),
       ),
     );
   }
@@ -43,11 +41,11 @@ class NavigateToGuideScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(onPressed: ()
-      {
-        Navigator.of(context).pushNamed(GuideScreen.route);
-      }
-    , child: Text("How to use this app ? "));
+    return TextButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed(GuideScreen.route);
+        },
+        child: Text("How to use this app ? "));
   }
 }
 
@@ -62,10 +60,11 @@ class ThemeModeChange extends StatelessWidget {
       children: [
         Icon(Icons.light_mode),
         Text("Open Light Mode"),
-        Switch(value: context.read<ThemeProvider>().isLightTheme, onChanged: (bool value){
-          context.read<ThemeProvider>().setTheme(value);
-        }),
-
+        Switch(
+            value: context.read<ThemeProvider>().isLightTheme,
+            onChanged: (bool value) {
+              context.read<ThemeProvider>().setTheme(value);
+            }),
       ],
     );
   }
