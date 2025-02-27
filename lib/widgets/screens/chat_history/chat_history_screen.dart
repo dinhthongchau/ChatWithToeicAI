@@ -35,6 +35,9 @@ class ChatHistoryScreen extends StatelessWidget {
                 padding: EdgeInsets.all(10),
                 child: ListTile(
                   title: Text(chatProvider.chatHistory[index]),
+                  trailing: IconButton(onPressed: (){
+                    context.read<ChatProvider>().deleteChatSession(sessionId);
+                  }, icon: Icon(Icons.delete,color: Colors.red,)),
                   onTap: () {
                     chatProvider.loadSession(sessionId);
                     Navigator.pop(context);

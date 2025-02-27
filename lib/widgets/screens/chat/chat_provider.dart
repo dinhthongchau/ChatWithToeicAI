@@ -73,4 +73,12 @@ class ChatProvider with ChangeNotifier{
 
 
   }
+
+
+  void deleteChatSession(String sessionId){
+    Hive.box('chatHistory').delete(sessionId);
+    _chatHistory.remove(sessionId);
+    Hive.box('chatHistory').put('history', _chatHistory);
+    notifyListeners();
+  }
 }
