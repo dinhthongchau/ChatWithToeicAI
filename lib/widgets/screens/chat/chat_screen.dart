@@ -26,9 +26,12 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
           leading: IconButton( onPressed: ()=> Navigator.of(context).pushNamed(ChatHistoryScreen.route),icon:  Icon(Icons.history)),
           title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+
               Text('Chat with TOEIC AI'),
               IconButton(icon: Icon(Icons.add),onPressed: ()=> {
                 context.read<ChatProvider>().startNewSession()
@@ -64,14 +67,16 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
-          Padding(
+          Container(
+            color: Colors.blueAccent,
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: InputDecoration(hintText: 'Type a message'),
+                    decoration: InputDecoration(
+                        hintText: 'Type a message'),
                   ),
                 ),
                 IconButton(
