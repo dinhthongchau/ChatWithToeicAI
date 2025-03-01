@@ -26,7 +26,7 @@ class GuideScreen extends StatelessWidget {
       body: Column(
         children: [
 
-          Text("Hoc ntn"),
+          Text("This is screen show you how to use app !"),
 
         ],
       ),

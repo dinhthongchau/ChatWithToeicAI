@@ -14,6 +14,7 @@ dependencies:
   provider: ^6.1.2
   hive_flutter: ^1.0.0
   shared_preferences: ^2.5.2
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -22,4 +23,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    #using this instead of .env for website compatibility
+    - lib/dotenv
 
