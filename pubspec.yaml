@@ -26,4 +26,5 @@ flutter:
   assets:
     #using this instead of .env for website compatibility
     - lib/dotenv
+    - assets/avatar/logo.png
 

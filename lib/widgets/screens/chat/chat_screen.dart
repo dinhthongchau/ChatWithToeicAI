@@ -38,35 +38,50 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () =>
-              Navigator.of(context).pushNamed(ChatHistoryScreen.route),
-          icon: Icon(Icons.history),
-        ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        leadingWidth: 120, // Tăng khoảng trống để chứa cả hai icon
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Chat with TOEIC AI'),
             IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () =>
-                    {context.read<ChatProvider>().startNewSession()})
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(ChatHistoryScreen.route),
+              icon: Icon(Icons.history),
+            ),
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () => context.read<ChatProvider>().startNewSession(),
+            ),
           ],
         ),
-      ),
+        title: Text(
+          'Chat with TOEIC AI',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true, 
+          actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 10),
+            child: CircleAvatar(
+              radius: 18,
+              backgroundImage: AssetImage('assets/avatar/logo.png'),
+            ),
+          ),
+        ],
+        ),
       body: Stack(
         children: [
           Body(controller: _controller, scrollController: _scrollController),
           Positioned(
-            bottom: 80,
+            bottom: 95,
             right: 20,
             child: SizedBox(
-              width: 25,
-              height: 25,
+              width: 30,
+              height: 30,
               child: FloatingActionButton(
+                backgroundColor: Color.fromARGB(255, 69, 67, 67),
                 mini: true,
                 onPressed: _scrollToBottom,
-                child: Icon(Icons.arrow_downward, size: 20),
+                child: Icon(Icons.expand_more, size: 25),
               ),
             ),
           ),
@@ -123,18 +138,32 @@ class Body extends StatelessWidget {
                         : CrossAxisAlignment.start,
                     children: [
                       Container(
-                        color: isUserMessage ? Colors.green : Colors.grey,
+                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+                        margin: EdgeInsets.symmetric(vertical: 5),
+                        decoration: BoxDecoration(
+                          color: isUserMessage
+                              ? const Color.fromARGB(255, 218, 236, 219)
+                              : const Color.fromARGB(255, 136, 131, 131),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(isUserMessage ? 16 : 2),
+                            topRight: Radius.circular(isUserMessage ? 2 : 16),
+                            bottomLeft: Radius.circular(16),
+                            bottomRight: Radius.circular(16),
+                          ),
+                        ),
                         child: Text(
                           chatProvider.messages[index],
-                          style: TextStyle(fontSize: 18),
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: isUserMessage ? Colors.black : Colors.white,
+                          ),
                         ),
                       ),
                       IconButton(
                         icon: Icon(Icons.copy, size: 20),
                         tooltip: 'Sao chép tin nhắn',
                         onPressed: () {
-                          context.read<ChatProvider>().copyMessage(chatProvider
-                                .messages[index]);
+                          context.read<ChatProvider>().copyMessage(chatProvider.messages[index]);
                         },
                       ),
                     ],
@@ -144,15 +173,24 @@ class Body extends StatelessWidget {
             },
           ),
         ),
+
         Container(
-          color: Colors.blueAccent,
-          padding: const EdgeInsets.all(8.0),
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10), 
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 69, 67, 67),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color.fromARGB(255, 145, 142, 142), width: 2),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
               Expanded(
                 child: TextField(
                   controller: _controller,
-                  decoration: InputDecoration(hintText: 'Type a message'),
+                  decoration: InputDecoration(
+                    hintText: 'Ask anything you want about TOEIC!!!',
+                    border: InputBorder.none,
+                  ),
                 ),
               ),
               Consumer<ChatProvider>(
@@ -160,7 +198,7 @@ class Body extends StatelessWidget {
                   return chatProvider.loadStatus == LoadStatus.Loading
                       ? Center(child: CircularProgressIndicator())
                       : IconButton(
-                          icon: Icon(Icons.send),
+                          icon: Icon(Icons.send, color: Colors.white, ),
                           onPressed: _sendMessage,
                         );
                 },
