@@ -35,10 +35,10 @@ class Body extends StatelessWidget {
     super.key,
   });
 
-  // Hàm hiển thị dialog khi nhấn lâu
+
   void _showOptionsDialog(BuildContext context, String sessionId) {
     final TextEditingController _renameController =
-        TextEditingController(text: sessionId); // Khởi tạo với tên hiện tại
+        TextEditingController(text: sessionId);
 
     showDialog(
       context: context,

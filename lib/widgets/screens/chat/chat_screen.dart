@@ -81,12 +81,10 @@ class Body extends StatelessWidget {
                       ),
                       IconButton(
                         icon: Icon(Icons.copy, size: 20),
-                        // Biểu tượng copy
                         tooltip: 'Sao chép tin nhắn',
-                        // Gợi ý khi hover (dành cho web/desktop)
                         onPressed: () {
                           context.read<ChatProvider>().copyMessage(chatProvider
-                              .messages[index]); // Gọi hàm sao chép khi nhấn
+                              .messages[index]);
                         },
                       ),
                     ],
