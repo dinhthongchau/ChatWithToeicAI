@@ -13,6 +13,26 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    //WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollToBottom());
+  }
+
+  void _scrollToBottom() {
+    //Future.delayed(Duration(milliseconds: 300), () {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    //});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +54,24 @@ class _ChatScreenState extends State<ChatScreen> {
           ],
         ),
       ),
-      body: Body(controller: _controller),
+      body: Stack(
+        children: [
+          Body(controller: _controller, scrollController: _scrollController),
+          Positioned(
+            bottom: 80,
+            right: 20,
+            child: SizedBox(
+              width: 25,
+              height: 25,
+              child: FloatingActionButton(
+                mini: true,
+                onPressed: _scrollToBottom,
+                child: Icon(Icons.arrow_downward, size: 20),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -43,9 +80,12 @@ class Body extends StatelessWidget {
   const Body({
     super.key,
     required TextEditingController controller,
-  }) : _controller = controller;
+    required ScrollController scrollController,
+  })  : _controller = controller,
+        _scrollController = scrollController;
 
   final TextEditingController _controller;
+  final ScrollController _scrollController;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +94,15 @@ class Body extends StatelessWidget {
       if (message.isNotEmpty) {
         context.read<ChatProvider>().addMessage(message);
         _controller.clear();
+        Future.delayed(Duration(milliseconds: 300), () {
+          if (_scrollController.hasClients) {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
+          }
+        });
       }
     }
 
@@ -63,6 +112,7 @@ class Body extends StatelessWidget {
           child: Consumer<ChatProvider>(
             builder: (context, chatProvider, child) {
               return ListView.builder(
+                controller: _scrollController,
                 padding: EdgeInsets.all(25),
                 itemCount: chatProvider.messages.length,
                 itemBuilder: (context, index) {
@@ -84,7 +134,7 @@ class Body extends StatelessWidget {
                         tooltip: 'Sao chép tin nhắn',
                         onPressed: () {
                           context.read<ChatProvider>().copyMessage(chatProvider
-                              .messages[index]);
+                                .messages[index]);
                         },
                       ),
                     ],
