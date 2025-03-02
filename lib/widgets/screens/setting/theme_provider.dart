@@ -24,4 +24,24 @@ class ThemeProvider with ChangeNotifier{
      await prefs.setBool(_themeKey, isLightTheme);
      notifyListeners();
    }
+
+  Color get backgroundColor => _isLightTheme ? Colors.white : Colors.black;
+  Color get textColor => _isLightTheme ? Colors.black : Colors.white;
+  Color get chatBoxColor => _isLightTheme
+      ? Color.fromARGB(255, 240, 240, 240)
+      : Color.fromARGB(255, 69, 67, 67);
+  Color get userMessageColor => _isLightTheme
+      ? Color.fromARGB(255, 200, 230, 201)
+      : Color.fromARGB(255, 129, 224, 133);
+  Color get botMessageColor => _isLightTheme
+      ? Color.fromARGB(255, 210, 210, 210)
+      : Color.fromARGB(255, 136, 131, 131);
+
+  Color get inputBoxColor => _isLightTheme
+      ? Color.fromARGB(255, 240, 240, 240) 
+      : Color.fromARGB(255, 69, 67, 67); 
+
+  Color get inputBorderColor => _isLightTheme
+      ? Color.fromARGB(255, 180, 180, 180) 
+      : Color.fromARGB(255, 145, 142, 142); 
 }

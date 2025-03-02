@@ -3,6 +3,9 @@ import 'package:ct312hm01_temp/widgets/screens/chat_history/chat_history_screen.
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'chat_provider.dart';
+import '../setting/theme_provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 
 class ChatScreen extends StatefulWidget {
   static const String route = "/chat";
@@ -24,69 +27,92 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _scrollToBottom() {
     //Future.delayed(Duration(milliseconds: 300), () {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
     //});
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leadingWidth: 120, // Tăng khoảng trống để chứa cả hai icon
-        leading: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(ChatHistoryScreen.route),
-              icon: Icon(Icons.history),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return Scaffold(
+          backgroundColor: themeProvider.backgroundColor,
+          appBar: AppBar(
+            backgroundColor: themeProvider.chatBoxColor,
+            leadingWidth: 120,
+            leading: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: () =>
+                      Navigator.of(context).pushNamed(ChatHistoryScreen.route),
+                  icon: Icon(Icons.history, color: themeProvider.textColor),
+                ),
+                IconButton(
+                  icon: Icon(Icons.add, color: themeProvider.textColor),
+                  onPressed: () {
+                    context.read<ChatProvider>().startNewSession();
+                    Fluttertoast.showToast(
+                        msg: "New chat",
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.CENTER, //Flutter web không hổ trợ căn giữa cho Fluttertoast, nó sẽ hiển thị ở góc phải trên màn hình
+                        backgroundColor: Colors.black.withOpacity(0.8), //cũng không hổ trợ chỉnh màu nền ở web, còn chạy emulator android ios thì bình thường
+                        textColor: Colors.white,
+                        fontSize: 16.0,
+                      );
+                  }
+                ),
+              ],
             ),
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () => context.read<ChatProvider>().startNewSession(),
-            ),
-          ],
-        ),
-        title: Text(
-          'Chat with TOEIC AI',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true, 
-          actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 10),
-            child: CircleAvatar(
-              radius: 18,
-              backgroundImage: AssetImage('assets/avatar/logo.png'),
-            ),
-          ),
-        ],
-        ),
-      body: Stack(
-        children: [
-          Body(controller: _controller, scrollController: _scrollController),
-          Positioned(
-            bottom: 95,
-            right: 20,
-            child: SizedBox(
-              width: 30,
-              height: 30,
-              child: FloatingActionButton(
-                backgroundColor: Color.fromARGB(255, 69, 67, 67),
-                mini: true,
-                onPressed: _scrollToBottom,
-                child: Icon(Icons.expand_more, size: 25),
+            title: Text(
+              'Chat with TOEIC AI',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: themeProvider.textColor,
               ),
             ),
+            centerTitle: true,
+            actions: [
+              Padding(
+                padding: EdgeInsets.only(right: 10),
+                child: CircleAvatar(
+                  radius: 18,
+                  backgroundImage: AssetImage('assets/avatar/logo.png'),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+          body: Stack(
+            children: [
+              Body(
+                controller: _controller,
+                scrollController: _scrollController,
+              ),
+              Positioned(
+                bottom: 95,
+                right: 20,
+                child: SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: FloatingActionButton(
+                    backgroundColor: themeProvider.botMessageColor,
+                    mini: true,
+                    onPressed: _scrollToBottom,
+                    child: Icon(Icons.expand_more,
+                        size: 25, color: themeProvider.textColor),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -126,6 +152,9 @@ class Body extends StatelessWidget {
         Expanded(
           child: Consumer<ChatProvider>(
             builder: (context, chatProvider, child) {
+              final themeProvider =
+                  context.watch<ThemeProvider>(); // Lấy theme hiện tại
+
               return ListView.builder(
                 controller: _scrollController,
                 padding: EdgeInsets.all(25),
@@ -138,12 +167,13 @@ class Body extends StatelessWidget {
                         : CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 14),
                         margin: EdgeInsets.symmetric(vertical: 5),
                         decoration: BoxDecoration(
                           color: isUserMessage
-                              ? const Color.fromARGB(255, 218, 236, 219)
-                              : const Color.fromARGB(255, 136, 131, 131),
+                              ? themeProvider.userMessageColor
+                              : themeProvider.botMessageColor,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(isUserMessage ? 16 : 2),
                             topRight: Radius.circular(isUserMessage ? 2 : 16),
@@ -155,15 +185,24 @@ class Body extends StatelessWidget {
                           chatProvider.messages[index],
                           style: TextStyle(
                             fontSize: 18,
-                            color: isUserMessage ? Colors.black : Colors.white,
+                            // color: isUserMessage
+                            //     ? themeProvider
+                            //         .textColor
+                            //     : Colors.white,
+                            color: themeProvider.textColor,
                           ),
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.copy, size: 20),
+                        icon: Icon(Icons.copy,
+                            size: 20,
+                            color: themeProvider
+                                .textColor), // Đổi màu icon theo theme
                         tooltip: 'Sao chép tin nhắn',
                         onPressed: () {
-                          context.read<ChatProvider>().copyMessage(chatProvider.messages[index]);
+                          context
+                              .read<ChatProvider>()
+                              .copyMessage(chatProvider.messages[index]);
                         },
                       ),
                     ],
@@ -173,13 +212,19 @@ class Body extends StatelessWidget {
             },
           ),
         ),
-
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10), 
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 69, 67, 67),
+            color: context
+                .watch<ThemeProvider>()
+                .inputBoxColor, // Màu nền theo theme
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color.fromARGB(255, 145, 142, 142), width: 2),
+            border: Border.all(
+              color: context
+                  .watch<ThemeProvider>()
+                  .inputBorderColor, // Màu viền theo theme
+              width: 2,
+            ),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
@@ -187,8 +232,17 @@ class Body extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: _controller,
+                  style: TextStyle(
+                      color: context
+                          .watch<ThemeProvider>()
+                          .textColor), // Màu chữ theo theme
                   decoration: InputDecoration(
                     hintText: 'Ask anything you want about TOEIC!!!',
+                    hintStyle: TextStyle(
+                        color: context
+                            .watch<ThemeProvider>()
+                            .textColor
+                            .withOpacity(0.6)), // Màu gợi ý
                     border: InputBorder.none,
                   ),
                 ),
@@ -198,7 +252,10 @@ class Body extends StatelessWidget {
                   return chatProvider.loadStatus == LoadStatus.Loading
                       ? Center(child: CircularProgressIndicator())
                       : IconButton(
-                          icon: Icon(Icons.send, color: Colors.white, ),
+                          icon: Icon(Icons.send,
+                              color: context
+                                  .watch<ThemeProvider>()
+                                  .textColor), // Màu icon theo theme
                           onPressed: _sendMessage,
                         );
                 },
