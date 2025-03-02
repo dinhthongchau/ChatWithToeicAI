@@ -8,8 +8,7 @@ class ChatProvider with ChangeNotifier {
   List<String> _messages = [];
   final ChatModel _chatModel;
   LoadStatus _loadStatus = LoadStatus.Init;
-  List<String> _chatHistory =
-      Hive.box('chatHistory').get('history', defaultValue: <String>[]) ?? [];
+  final List<String> _chatHistory = Hive.box('chatHistory').get('history', defaultValue: <String>[]) ?? [];
   String? _currentSessionId; //store id current chat session
   ChatProvider(this._chatModel) {
     if (_chatModel == null) {
@@ -125,6 +124,31 @@ class ChatProvider with ChangeNotifier {
 
     notifyListeners(); // Thông báo để giao diện cập nhật
   }
+
+
+  void scrollToBottom(ScrollController scrollController ) {
+
+    if (scrollController.hasClients) {
+
+      WidgetsBinding.instance.addPostFrameCallback((_){
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      });
+
+    }
+
+  }
+
+  void initScroll(ScrollController scrollController){
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      scrollToBottom(scrollController);
+    });
+  }
+
+
 
 
 }

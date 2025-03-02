@@ -49,14 +49,14 @@ class ChatHistoryScreen extends StatelessWidget {
                     ),
                     SizedBox(width: 10), // Khoảng cách giữa avatar và tên
                     // Tên người dùng
-                    Text(
-                      "Nguyễn Nhật A", // Giá trị ví dụ
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: themeProvider.textColor, // Màu chữ theo theme
-                      ),
-                    ),
+                    // Text(
+                    //   "Nguyễn Nhật A", // Giá trị ví dụ
+                    //   style: TextStyle(
+                    //     fontSize: 16,
+                    //     fontWeight: FontWeight.w500,
+                    //     color: themeProvider.textColor, // Màu chữ theo theme
+                    //   ),
+                    // ),
                   ],
                 ),
 
