@@ -1,7 +1,7 @@
-import 'package:ct312hm01_temp/widgets/screens/setting/setting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../chat/chat_provider.dart';
+import '../setting/setting_dialog.dart';
 import '../setting/theme_provider.dart';
 
 class ChatHistoryScreen extends StatelessWidget {
@@ -63,7 +63,7 @@ class ChatHistoryScreen extends StatelessWidget {
                 // Nút Settings có sự kiện riêng
                 IconButton(
                   onPressed: () {
-                    Navigator.of(context).pushNamed(SettingScreen.route);
+                    showSettingDialog(context);
                   },
                   icon: Icon(Icons.settings,
                       color: themeProvider.textColor), // Màu theo theme

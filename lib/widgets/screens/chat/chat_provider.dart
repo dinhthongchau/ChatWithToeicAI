@@ -30,7 +30,7 @@ class ChatProvider with ChangeNotifier {
     Hive.box('chatHistory').put(sessionId, _messages);
     if (!_chatHistory.contains(sessionId)) {
       _chatHistory.add(sessionId);
-      Hive.box('chatHistory').put('history', _chatHistory); // update lít hítory
+      Hive.box('chatHistory').put('history', _chatHistory); // update líst hítory
     }
     notifyListeners();
   }
@@ -83,12 +83,7 @@ class ChatProvider with ChangeNotifier {
     }
   }
 
-  void deleteChatSession(String sessionId) {
-    Hive.box('chatHistory').delete(sessionId);
-    _chatHistory.remove(sessionId);
-    Hive.box('chatHistory').put('history', _chatHistory);
-    notifyListeners();
-  }
+
 
 
 
@@ -123,6 +118,12 @@ class ChatProvider with ChangeNotifier {
     }
 
     notifyListeners(); // Thông báo để giao diện cập nhật
+  }
+  void deleteChatSession(String sessionId) {
+    Hive.box('chatHistory').delete(sessionId);
+    _chatHistory.remove(sessionId);
+    Hive.box('chatHistory').put('history', _chatHistory);
+    notifyListeners();
   }
 
 
