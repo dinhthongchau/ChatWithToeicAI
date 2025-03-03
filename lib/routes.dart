@@ -1,4 +1,4 @@
-import 'package:ct312hm01_temp/widgets/screens/chat_history/chat_history_screen.dart';
+import 'package:ct312hm01_temp/widgets/screens/history/history_screen.dart';
 import 'package:ct312hm01_temp/widgets/screens/guide/guide_screen.dart';
 import 'package:flutter/material.dart';
 

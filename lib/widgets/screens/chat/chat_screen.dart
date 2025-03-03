@@ -1,8 +1,9 @@
 import 'package:ct312hm01_temp/common/enum/load_status.dart';
-import 'package:ct312hm01_temp/widgets/common_widgets/notice_snackbar.dart';
-import 'package:ct312hm01_temp/widgets/screens/chat_history/chat_history_screen.dart';
+import 'package:ct312hm01_temp/widgets/common_widgets/custom_notice_snackbar.dart';
+import 'package:ct312hm01_temp/widgets/screens/history/history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../common_widgets/custom_loading_indicator.dart';
 import 'chat_provider.dart';
 import '../setting/theme_provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -268,7 +269,10 @@ class Body extends StatelessWidget {
                 builder: (context, chatProvider, child) {
 
                   return chatProvider.loadStatus == LoadStatus.Loading
-                      ? Center(child: CircularProgressIndicator())
+                      ? Center(child: CustomLoadingIndicator(
+                    color: Colors.red,
+                    size: 30.0,
+                  ))
                       : IconButton(
                           icon: Icon(Icons.send,
                               color: context
@@ -277,7 +281,7 @@ class Body extends StatelessWidget {
                           onPressed: () {
                             if ( _inputController.text.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                noticeSnackbar(context,"Please ask question", true),
+                                customNoticeSnackbar(context,"Please ask question", true),
                               );
                             } else {
                               _sendMessage();
