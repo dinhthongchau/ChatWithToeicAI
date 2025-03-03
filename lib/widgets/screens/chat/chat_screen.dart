@@ -266,7 +266,7 @@ class Body extends StatelessWidget {
               ),
               Consumer<ChatProvider>(
                 builder: (context, chatProvider, child) {
-                  final isNullInput = _inputController.text.isEmpty;
+
                   return chatProvider.loadStatus == LoadStatus.Loading
                       ? Center(child: CircularProgressIndicator())
                       : IconButton(
@@ -275,7 +275,7 @@ class Body extends StatelessWidget {
                                   .watch<ThemeProvider>()
                                   .textColor), // Màu icon theo theme
                           onPressed: () {
-                            if (isNullInput) {
+                            if ( _inputController.text.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 noticeSnackbar(context,"Please ask question", true),
                               );
