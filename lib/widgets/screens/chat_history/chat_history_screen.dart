@@ -20,8 +20,7 @@ class ChatHistoryScreen extends StatelessWidget {
             },
             icon: Icon(Icons.arrow_back)),
       ),
-
-        bottomNavigationBar: Consumer<ThemeProvider>(
+      bottomNavigationBar: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
           return Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -73,7 +72,6 @@ class ChatHistoryScreen extends StatelessWidget {
           );
         },
       ),
-
       body: Body(),
     );
   }
@@ -85,8 +83,7 @@ class Body extends StatelessWidget {
   });
 
   void _showOptionsDialog(BuildContext context, String sessionId) {
-    final TextEditingController _renameController =
-        TextEditingController(text: sessionId);
+    final TextEditingController _renameController = TextEditingController(text: sessionId);
 
     showDialog(
       context: context,
@@ -145,7 +142,7 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer2<ChatProvider, ThemeProvider>(
-      builder: (context, chatProvider,themeProvider, child) {
+      builder: (context, chatProvider, themeProvider, child) {
         return Container(
           margin: EdgeInsets.all(10),
           child: Column(
@@ -172,18 +169,25 @@ class Body extends StatelessWidget {
                   itemCount: chatProvider.chatHistory.length,
                   itemBuilder: (context, index) {
                     final sessionId = chatProvider.chatHistory[index];
+                    final isSelected =
+                        sessionId == chatProvider.currentSessionId;
                     return Container(
                       padding:
                           EdgeInsets.symmetric(vertical: 10, horizontal: 14),
                       margin: EdgeInsets.symmetric(vertical: 5),
                       decoration: BoxDecoration(
                         color: themeProvider.chatBoxColor,
-                        borderRadius:
-                            BorderRadius.circular(16),
-                            border: Border.all(
-                              color: themeProvider.HistoryborderColor, // Màu viền lấy từ ThemeProvider
-                              width: 2.0, // Độ dày của viền
-                        ), // Chỉnh border radius
+                        borderRadius: BorderRadius.circular(16),
+                        border: isSelected
+                            ? Border.all(
+                                color: Colors.white,
+                                width: 2.0,
+                              )
+                            : Border.all(
+                                //color: themeProvider.HistoryborderColor,
+
+                                width: 2.0, // Độ dày của viền
+                              ), // Chỉnh border radius
                       ),
                       // padding: EdgeInsets.all(10),
                       // margin: EdgeInsets.all(10),

@@ -8,13 +8,13 @@ class ChatProvider with ChangeNotifier {
   List<String> _messages = [];
   final ChatModel _chatModel;
   LoadStatus _loadStatus = LoadStatus.Init;
-  final List<String> _chatHistory = Hive.box('chatHistory').get('history', defaultValue: <String>[]) ?? [];
+  final List<String> _chatHistory =
+      Hive.box('chatHistory').get('history', defaultValue: <String>[]) ?? [];
   String? _currentSessionId; //store id current chat session
   ChatProvider(this._chatModel) {
     if (_chatModel == null) {
       throw ArgumentError('ChatModel cannot be null');
     }
-
   }
 
   //Getters
@@ -30,7 +30,8 @@ class ChatProvider with ChangeNotifier {
     Hive.box('chatHistory').put(sessionId, _messages);
     if (!_chatHistory.contains(sessionId)) {
       _chatHistory.add(sessionId);
-      Hive.box('chatHistory').put('history', _chatHistory); // update líst hítory
+      Hive.box('chatHistory')
+          .put('history', _chatHistory); // update líst hítory
     }
     notifyListeners();
   }
@@ -74,7 +75,6 @@ class ChatProvider with ChangeNotifier {
         _messages.add(response);
         _loadStatus = LoadStatus.Done;
         notifyListeners();
-
       }
     } catch (error) {
       _loadStatus = LoadStatus.Error;
@@ -83,15 +83,10 @@ class ChatProvider with ChangeNotifier {
     }
   }
 
-
-
-
-
   void copyMessage(String message) {
     Clipboard.setData(ClipboardData(text: message));
     notifyListeners(); // Cập nhật giao diện (nếu cần thêm thông báo trong UI)
   }
-
 
 // Thêm vào class ChatProvider
   void renameChatSession(String oldSessionId, String newSessionId) {
@@ -119,6 +114,7 @@ class ChatProvider with ChangeNotifier {
 
     notifyListeners(); // Thông báo để giao diện cập nhật
   }
+
   void deleteChatSession(String sessionId) {
     Hive.box('chatHistory').delete(sessionId);
     _chatHistory.remove(sessionId);
@@ -126,30 +122,21 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
   }
 
-
-  void scrollToBottom(ScrollController scrollController ) {
-
+  void scrollToBottom(ScrollController scrollController) {
     if (scrollController.hasClients) {
-
-      WidgetsBinding.instance.addPostFrameCallback((_){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         scrollController.animateTo(
           scrollController.position.maxScrollExtent,
           duration: Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
       });
-
     }
-
   }
 
-  void initScroll(ScrollController scrollController){
-    WidgetsBinding.instance.addPostFrameCallback((_){
+  void initScroll(ScrollController scrollController) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       scrollToBottom(scrollController);
     });
   }
-
-
-
-
 }

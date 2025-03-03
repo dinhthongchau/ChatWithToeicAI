@@ -1,11 +1,11 @@
 import 'package:ct312hm01_temp/common/enum/load_status.dart';
+import 'package:ct312hm01_temp/widgets/common_widgets/notice_snackbar.dart';
 import 'package:ct312hm01_temp/widgets/screens/chat_history/chat_history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'chat_provider.dart';
 import '../setting/theme_provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
 
 class ChatScreen extends StatefulWidget {
   static const String route = "/chat";
@@ -17,7 +17,8 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _inputController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  late ChatProvider chatProvider  = context.read<ChatProvider>(); // Khai báo chatProvider
+  late ChatProvider chatProvider =
+      context.read<ChatProvider>(); // Khai báo chatProvider
 
   @override
   void initState() {
@@ -35,10 +36,8 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         //call when initialize
@@ -54,9 +53,12 @@ class _ChatScreenState extends State<ChatScreen> {
                 IconButton(
                   onPressed: () =>
                       Navigator.of(context).pushNamed(ChatHistoryScreen.route),
-                  icon: Icon(Icons.format_list_bulleted, color: themeProvider.textColor, size: 35,),
+                  icon: Icon(
+                    Icons.format_list_bulleted,
+                    color: themeProvider.textColor,
+                    size: 35,
+                  ),
                 ),
-
               ],
             ),
             title: Row(
@@ -64,9 +66,10 @@ class _ChatScreenState extends State<ChatScreen> {
                 CircleAvatar(
                   radius: 18,
                   backgroundImage: AssetImage('assets/avatar/logo.png'),
-
                 ),
-                SizedBox(width: 10,),
+                SizedBox(
+                  width: 10,
+                ),
                 Text(
                   'TOEIC AI',
                   style: TextStyle(
@@ -78,21 +81,25 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             centerTitle: true,
             actions: [
-
               IconButton(
-                  icon: Icon(Icons.add_circle_outline, color: themeProvider.textColor, size: 35,),
+                  icon: Icon(
+                    Icons.add_circle_outline,
+                    color: themeProvider.textColor,
+                    size: 35,
+                  ),
                   onPressed: () {
                     chatProvider.startNewSession();
                     Fluttertoast.showToast(
                       msg: "New chat",
                       toastLength: Toast.LENGTH_LONG,
-                      gravity: ToastGravity.CENTER, //Flutter web không hổ trợ căn giữa cho Fluttertoast, nó sẽ hiển thị ở góc phải trên màn hình
-                      backgroundColor: Colors.black.withOpacity(0.8), //cũng không hổ trợ chỉnh màu nền ở web, còn chạy emulator android ios thì bình thường
+                      gravity: ToastGravity.CENTER,
+                      //Flutter web không hổ trợ căn giữa cho Fluttertoast, nó sẽ hiển thị ở góc phải trên màn hình
+                      backgroundColor: Colors.black.withOpacity(0.8),
+                      //cũng không hổ trợ chỉnh màu nền ở web, còn chạy emulator android ios thì bình thường
                       textColor: Colors.white,
                       fontSize: 16.0,
                     );
-                  }
-              ),
+                  }),
             ],
           ),
           body: Stack(
@@ -111,7 +118,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: FloatingActionButton(
                     backgroundColor: themeProvider.botMessageColor,
                     mini: true,
-                    onPressed:(){
+                    onPressed: () {
                       chatProvider.scrollToBottom(_scrollController);
                     },
                     child: Icon(Icons.expand_more,
@@ -162,7 +169,8 @@ class Body extends StatelessWidget {
         Expanded(
           child: Consumer<ChatProvider>(
             builder: (context, chatProvider, child) {
-              final themeProvider = context.watch<ThemeProvider>(); // Lấy theme hiện tại
+              final themeProvider =
+                  context.watch<ThemeProvider>(); // Lấy theme hiện tại
 
               return ListView.builder(
                 controller: _scrollController,
@@ -258,6 +266,7 @@ class Body extends StatelessWidget {
               ),
               Consumer<ChatProvider>(
                 builder: (context, chatProvider, child) {
+                  final isNullInput = _inputController.text.isEmpty;
                   return chatProvider.loadStatus == LoadStatus.Loading
                       ? Center(child: CircularProgressIndicator())
                       : IconButton(
@@ -265,8 +274,15 @@ class Body extends StatelessWidget {
                               color: context
                                   .watch<ThemeProvider>()
                                   .textColor), // Màu icon theo theme
-                          onPressed: _sendMessage,
-                        );
+                          onPressed: () {
+                            if (isNullInput) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                noticeSnackbar(context,"Please ask question", true),
+                              );
+                            } else {
+                              _sendMessage();
+                            }
+                          });
                 },
               ),
             ],
