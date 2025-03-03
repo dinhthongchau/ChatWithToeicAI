@@ -5,89 +5,74 @@ import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class ChatProvider with ChangeNotifier {
-  List<String> _messages = [];
   final ChatModel _chatModel;
+  ChatProvider(this._chatModel) ;
+  //init
+  List<String> _messages = [];
+  List<String> _chatHistory=[];
+  String? _currentSessionId;
   LoadStatus _loadStatus = LoadStatus.Init;
-  final List<String> _chatHistory =
-      Hive.box('chatHistory').get('history', defaultValue: <String>[]) ?? [];
-  String? _currentSessionId; //store id current chat session
-  ChatProvider(this._chatModel) {
-    if (_chatModel == null) {
-      throw ArgumentError('ChatModel cannot be null');
-    }
-  }
 
-  //Getters
-  List<String> get messages => _messages;
-
+  //get
   LoadStatus get loadStatus => _loadStatus;
-
-  get chatHistory => _chatHistory;
-
+  List<String> get messages => _messages;
   String? get currentSessionId => _currentSessionId;
-
-  void saveCurrentSession(String sessionId) {
-    Hive.box('chatHistory').put(sessionId, _messages);
-    if (!_chatHistory.contains(sessionId)) {
+  List<String> get chatHistory => _chatHistory;
+  //store chat current to Hive ( key,value is history: sessionId[], each sessionId: message[] )
+  void saveCurrentSession(String sessionId){
+    Hive.box('chatHistory').put(sessionId,_messages);
+    if (!_chatHistory.contains(sessionId)){
       _chatHistory.add(sessionId);
-      Hive.box('chatHistory')
-          .put('history', _chatHistory); // update líst hítory
+      Hive.box('chatHistory').put('history',_chatHistory);
     }
     notifyListeners();
   }
-
-  //
+  //load a chat in history
   void loadSession(String sessionId) {
-    if (_messages.isNotEmpty && _currentSessionId != null) {
-      saveCurrentSession(
-          _currentSessionId!); // Lưu phiên hiện tại trước khi chuyển
+    if(_messages.isNotEmpty && _currentSessionId != null){
+      saveCurrentSession(_currentSessionId!);
     }
     _currentSessionId = sessionId;
-    _messages = Hive.box('chatHistory')
-            .get(sessionId, defaultValue: <String>[])?.cast<String>() ??
-        [];
-    _loadStatus = LoadStatus.Done;
+    _messages = Hive.box('chatHistory').get(sessionId,defaultValue: <String>[]);
     notifyListeners();
-  }
 
-  void startNewSession() {
-    if (_messages.isNotEmpty && _currentSessionId != null) {
-      saveCurrentSession(
-          _currentSessionId!); // Lưu phiên hiện tại trước khi tạo mới
+  }
+  //start new chat
+  void startNewSession(){
+    if(_messages.isNotEmpty && _currentSessionId != null ){
+      saveCurrentSession(_currentSessionId!);
     }
-    _messages = []; // Reset danh sách tin nhắn
-    _currentSessionId =
-        'Chat ${DateTime.now().toString().substring(0, 19)}'; // Tạo ID mới
+
+    _messages =[];
+    _currentSessionId = 'Chat ${DateTime.now()}';
     notifyListeners();
   }
-
+  //add message with call api on current chat
   Future<void> addMessage(String message) async {
-    if (_currentSessionId == null) {
-      startNewSession(); // Tạo phiên mới nếu chưa có
+    if(_currentSessionId == null){
+      startNewSession();
     }
     _messages.add(message);
-    _loadStatus = LoadStatus.Loading;
     notifyListeners();
-    try {
+    _loadStatus = LoadStatus.Loading;
+    try{
       final response = await _chatModel.generateResponse(message);
-      print(response);
-      if (response != null) {
+      if (response != null){
         _messages.add(response);
-        _loadStatus = LoadStatus.Done;
         notifyListeners();
+        _loadStatus = LoadStatus.Done;
       }
-    } catch (error) {
+    }
+    catch(e){
       _loadStatus = LoadStatus.Error;
-    } finally {
-      notifyListeners();
+      print("Error call api $e");
     }
   }
-
-  void copyMessage(String message) {
+  //copy selected message
+  void copyMessage(String message){
     Clipboard.setData(ClipboardData(text: message));
-    notifyListeners(); // Cập nhật giao diện (nếu cần thêm thông báo trong UI)
+    notifyListeners();
   }
-
 // Thêm vào class ChatProvider
   void renameChatSession(String oldSessionId, String newSessionId) {
     // Kiểm tra nếu tên mới đã tồn tại trong lịch sử
