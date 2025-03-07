@@ -43,7 +43,7 @@ class ThemeProvider with ChangeNotifier{
   Color get inputBorderColor => _isLightTheme //màu viền khung nhập
       ? Color.fromARGB(255, 180, 180, 180) 
       : Color.fromARGB(255, 145, 142, 142); 
-  Color get HistoryborderColor => _isLightTheme //màu viền khung nhập
+  Color get historyBorderColor => _isLightTheme //màu viền khung nhập
       ? Color.fromARGB(255, 124, 206, 173)
       : Color.fromARGB(255, 145, 142, 142); 
 }

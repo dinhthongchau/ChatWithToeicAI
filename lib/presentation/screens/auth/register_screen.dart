@@ -62,23 +62,32 @@ class _BodyState extends State<Body> {
           obscureText: true,
         ),
         ElevatedButton(
+
             onPressed: () async {
+              //store context
+              final BuildContext currentContext = context;
               try {
                 await authProvider.signUpWithEmail(_emailController.text,
                     _passwordController.text, _confirmPasswordController.text);
                 //check ok
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  customNoticeSnackbar(context, "Sign up ok", false),
-                );
-                Future.delayed(Duration(seconds: 2));
-                Navigator.of(context).pushNamed(LoginScreen.route);
-              } catch (e) {
-                if (authProvider.loadStatus == LoadStatus.Error) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    customNoticeSnackbar(context, "$e", true),
+                if(context.mounted){
+                  ScaffoldMessenger.of(currentContext).showSnackBar(
+                    customNoticeSnackbar(currentContext, "Sign up ok", false),
                   );
+                  Future.delayed(Duration(seconds: 2));
+                  Navigator.of(currentContext).pushNamed(LoginScreen.route);
                 }
+
+
+              } catch (e) {
+                if(context.mounted){
+                  if (authProvider.loadStatus == LoadStatus.error) {
+                    ScaffoldMessenger.of(currentContext).showSnackBar(
+                      customNoticeSnackbar(currentContext, "$e", true),
+                    );
+                  }
+                }
+
               }
             },
             child: Text("Sign up"))

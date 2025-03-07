@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../auth/app_auth_provider.dart';
@@ -69,7 +68,7 @@ class BottomNavigationBar extends StatelessWidget {
             color: themeProvider.chatBoxColor, // Màu theo theme
             border: Border(
               top: BorderSide(
-                  color: themeProvider.HistoryborderColor,
+                  color: themeProvider.historyBorderColor,
                   width: 0.5), // Màu viền
             ),
           ),
@@ -90,7 +89,7 @@ class BottomNavigationBar extends StatelessWidget {
                   SizedBox(width: 10), // Khoảng cách giữa avatar và tên
                   // Tên người dùng
                   Text(
-                    "${context.read<AppAuthProvider>().getEmailAfterSignIn()}" ,// Giá trị ví dụ
+                    context.read<AppAuthProvider>().getEmailAfterSignIn() ,// Giá trị ví dụ
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -168,7 +167,7 @@ class Body extends StatelessWidget {
                                 width: 2.0,
                               )
                             : Border.all(
-                                //color: themeProvider.HistoryborderColor,
+                                //color: themeProvider.historyBorderColor,
 
                                 width: 2.0, // Độ dày của viền
                               ), // Chỉnh border radius

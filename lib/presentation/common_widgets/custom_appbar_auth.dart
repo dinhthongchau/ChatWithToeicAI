@@ -4,13 +4,13 @@ import 'package:provider/provider.dart';
 import '../screens/setting/theme_provider.dart';
 
 class CustomAppBarAuth extends StatelessWidget implements PreferredSizeWidget {
-  final String text_appbar ;
+  final String textAppbar ;
 
-  CustomAppBarAuth(this.text_appbar);
+  const CustomAppBarAuth(this.textAppbar, {super.key});
   @override
   Widget build(BuildContext context) {
     return AppBar(
-        backgroundColor: context.read<ThemeProvider>().backgroundColor,title: Text("$text_appbar",style: TextStyle(color: context.read<ThemeProvider>().textColor,fontSize: 15),));
+        backgroundColor: context.read<ThemeProvider>().backgroundColor,title: Text(textAppbar,style: TextStyle(color: context.read<ThemeProvider>().textColor,fontSize: 15),));
   }
 
   @override

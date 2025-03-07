@@ -4,21 +4,21 @@ import 'package:flutter/material.dart';
 
 
 class AppAuthProvider extends ChangeNotifier {
-  LoadStatus _loadStatus = LoadStatus.Init;
+  LoadStatus _loadStatus = LoadStatus.init;
 
   LoadStatus get loadStatus => _loadStatus;
 
   Future<void> loginWithEmail(String emailController,String passwordController) async {
-    _loadStatus = LoadStatus.Loading;
+    _loadStatus = LoadStatus.loading;
     notifyListeners();
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController, password: passwordController);
-      _loadStatus = LoadStatus.Done;
+      _loadStatus = LoadStatus.done;
       notifyListeners();
 
     } catch (e) {
-      _loadStatus = LoadStatus.Error;
+      _loadStatus = LoadStatus.error;
       notifyListeners();
       rethrow;
     }
@@ -26,11 +26,11 @@ class AppAuthProvider extends ChangeNotifier {
 
   Future<void> signUpWithEmail(String email, String password,
       String confirmPassword) async {
-    _loadStatus = LoadStatus.Loading;
+    _loadStatus = LoadStatus.loading;
     notifyListeners();
 
     if (password != confirmPassword) {
-      _loadStatus = LoadStatus.Error;
+      _loadStatus = LoadStatus.error;
       notifyListeners();
       throw Exception("Passwords do not match");
     }
@@ -39,10 +39,10 @@ class AppAuthProvider extends ChangeNotifier {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email, password: password);
-      _loadStatus = LoadStatus.Done;
+      _loadStatus = LoadStatus.done;
       notifyListeners();
     } catch (e) {
-      _loadStatus = LoadStatus.Error;
+      _loadStatus = LoadStatus.error;
       notifyListeners();
       rethrow;
     }

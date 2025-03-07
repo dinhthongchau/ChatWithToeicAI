@@ -14,19 +14,19 @@ class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  ChatScreenState createState() => ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class ChatScreenState extends State<ChatScreen> {
   final TextEditingController _inputController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   late ChatProvider chatProvider =
-      context.read<ChatProvider>(); // Khai báo chatProvider
+      context.read<ChatProvider>();
 
   @override
   void initState() {
     super.initState();
-    chatProvider = context.read<ChatProvider>(); // Khởi tạo chatProvider
+    chatProvider = context.read<ChatProvider>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       chatProvider.initScroll(_scrollController);
     });
@@ -34,8 +34,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
-    _scrollController.dispose(); // Hủy ScrollController
-    _inputController.dispose(); // Hủy TextEditingController
+    _scrollController.dispose();
+    _inputController.dispose();
     super.dispose();
   }
 
@@ -97,7 +97,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       toastLength: Toast.LENGTH_LONG,
                       gravity: ToastGravity.CENTER,
                       //Flutter web không hổ trợ căn giữa cho Fluttertoast, nó sẽ hiển thị ở góc phải trên màn hình
-                      backgroundColor: Colors.black.withOpacity(0.8),
+                      backgroundColor: Colors.black,
                       //cũng không hổ trợ chỉnh màu nền ở web, còn chạy emulator android ios thì bình thường
                       textColor: Colors.white,
                       fontSize: 16.0,
@@ -261,8 +261,7 @@ class Body extends StatelessWidget {
                     hintStyle: TextStyle(
                         color: context
                             .watch<ThemeProvider>()
-                            .textColor
-                            .withOpacity(0.6)), // Màu gợi ý
+                            .textColor), // Màu gợi ý
                     border: InputBorder.none,
                   ),
                 ),
@@ -270,7 +269,7 @@ class Body extends StatelessWidget {
               Consumer<ChatProvider>(
                 builder: (context, chatProvider, child) {
 
-                  return chatProvider.loadStatus == LoadStatus.Loading
+                  return chatProvider.loadStatus == LoadStatus.loading
                       ? Center(child: CustomLoadingIndicator(
                     color: Colors.red,
                     size: 30.0,

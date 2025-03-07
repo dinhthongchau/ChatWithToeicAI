@@ -9,8 +9,7 @@ import 'screens/chat/chat_screen.dart';
 
 Route<dynamic> mainRoute(RouteSettings settings) {
   return switch (settings.name) {
-    ChatScreen.route => MaterialPageRoute(
-          builder: (context) => ChatScreen()),
+    ChatScreen.route => MaterialPageRoute(builder: (context) => ChatScreen()),
     ChatHistoryScreen.route => MaterialPageRoute(builder: (context) => ChatHistoryScreen()),
     GuideScreen.route => MaterialPageRoute(builder: (context) => GuideScreen()),
     LoginScreen.route => MaterialPageRoute(builder: (context) => LoginScreen()),

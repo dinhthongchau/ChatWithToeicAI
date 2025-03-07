@@ -10,6 +10,8 @@ import '../chat/chat_screen.dart';
 class LoginScreen extends StatelessWidget {
   static const String route = "/login";
 
+  const LoginScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,17 +58,24 @@ class _BodyState extends State<Body> {
               try {
                 await authProvider.loginWithEmail(
                     _emailController.text, _passwordController.text);
-                //avoid context after await
-                if (!mounted) return;
-                Navigator.of(context).pushNamed(ChatScreen.route);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  customNoticeSnackbar(
-                      context, "Sign in ok with ${context.read<AppAuthProvider>().getEmailAfterSignIn()} ", false),
-                );
+
+                if (context.mounted){
+                  Navigator.of(context).pushNamed(ChatScreen.route);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    customNoticeSnackbar(
+                        context,
+                        "Sign in ok with ${authProvider.getEmailAfterSignIn()} ",
+                        false),
+                  );
+                }
+
               } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  customNoticeSnackbar(context, "$e", true),
-                );
+                    if (context.mounted){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        customNoticeSnackbar(context, "$e", true),
+                      );
+                    }
+
               }
             },
             child: Text("Login")),
