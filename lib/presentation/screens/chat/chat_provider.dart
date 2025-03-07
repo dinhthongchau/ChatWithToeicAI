@@ -1,15 +1,16 @@
-import 'package:ct312hm01_temp/common/enum/load_status.dart';
-import 'package:ct312hm01_temp/models/chat_model.dart';
+import 'package:ct312hm01_temp/core/enum/load_status.dart';
+import 'package:ct312hm01_temp/services/chat_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class ChatProvider with ChangeNotifier {
-  final ChatModel _chatModel;
+  final ChatService _chatModel;
   ChatProvider(this._chatModel) ;
   //init
   List<String> _messages = [];
-  final List<String> _chatHistory=[];
+  final List<String> _chatHistory = Hive.box('chatHistory').get('history', defaultValue: <String>[]) ?? [];
+
   String? _currentSessionId;
   LoadStatus _loadStatus = LoadStatus.Init;
 
@@ -106,6 +107,7 @@ class ChatProvider with ChangeNotifier {
   }
 
   void scrollToBottom(ScrollController scrollController) {
+    if (scrollController == null) return;
     if (scrollController.hasClients) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         scrollController.animateTo(

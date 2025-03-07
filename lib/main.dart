@@ -1,7 +1,7 @@
-import 'package:ct312hm01_temp/models/chat_model.dart';
-import 'package:ct312hm01_temp/widgets/screens/auth/login_screen.dart';
-import 'package:ct312hm01_temp/widgets/screens/chat/chat_provider.dart';
-import 'package:ct312hm01_temp/widgets/screens/setting/theme_provider.dart';
+import 'package:ct312hm01_temp/services/chat_service.dart';
+import 'package:ct312hm01_temp/presentation/screens/auth/login_screen.dart';
+import 'package:ct312hm01_temp/presentation/screens/chat/chat_provider.dart';
+import 'package:ct312hm01_temp/presentation/screens/setting/theme_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +9,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
-import 'routes.dart';
-import 'widgets/screens/auth/app_auth_provider.dart';
+import 'presentation/routes.dart';
+import 'presentation/screens/auth/app_auth_provider.dart';
+Future<void> initializeApp() async {
 
+}
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -32,11 +34,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String? apiKey= dotenv.env['API_KEY'];
-    final chatModel = ChatModel(apiKey!);
+    final chatService = ChatService(apiKey!);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => ChatProvider(chatModel),
+          create: (_) => ChatProvider(chatService),
         ),
         ChangeNotifierProvider(
           create: (_) => ThemeProvider(),

@@ -1,6 +1,6 @@
-import 'package:ct312hm01_temp/widgets/screens/auth/app_auth_provider.dart';
-import 'package:ct312hm01_temp/widgets/screens/guide/guide_screen.dart';
-import 'package:ct312hm01_temp/widgets/screens/setting/theme_provider.dart';
+import 'package:ct312hm01_temp/presentation/screens/auth/app_auth_provider.dart';
+import 'package:ct312hm01_temp/presentation/screens/guide/guide_screen.dart';
+import 'package:ct312hm01_temp/presentation/screens/setting/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

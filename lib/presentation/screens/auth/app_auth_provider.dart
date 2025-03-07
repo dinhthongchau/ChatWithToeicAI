@@ -1,11 +1,7 @@
-import 'package:ct312hm01_temp/common/enum/load_status.dart';
-import 'package:ct312hm01_temp/widgets/common_widgets/custom_notice_snackbar.dart';
-import 'package:ct312hm01_temp/widgets/screens/auth/login_screen.dart';
+import 'package:ct312hm01_temp/core/enum/load_status.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../chat/chat_screen.dart';
 
 class AppAuthProvider extends ChangeNotifier {
   LoadStatus _loadStatus = LoadStatus.Init;
@@ -24,7 +20,7 @@ class AppAuthProvider extends ChangeNotifier {
     } catch (e) {
       _loadStatus = LoadStatus.Error;
       notifyListeners();
-      throw e;
+      rethrow;
     }
   }
 
@@ -48,7 +44,7 @@ class AppAuthProvider extends ChangeNotifier {
     } catch (e) {
       _loadStatus = LoadStatus.Error;
       notifyListeners();
-      throw e;
+      rethrow;
     }
   }
 

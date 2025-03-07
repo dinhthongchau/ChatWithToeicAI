@@ -1,5 +1,5 @@
-import 'package:ct312hm01_temp/common/enum/load_status.dart';
-import 'package:ct312hm01_temp/widgets/common_widgets/custom_appbar_auth.dart';
+import 'package:ct312hm01_temp/core/enum/load_status.dart';
+import 'package:ct312hm01_temp/presentation/common_widgets/custom_appbar_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -1,6 +1,6 @@
-import 'package:ct312hm01_temp/widgets/common_widgets/custom_appbar_auth.dart';
-import 'package:ct312hm01_temp/widgets/screens/auth/app_auth_provider.dart';
-import 'package:ct312hm01_temp/widgets/screens/auth/register_screen.dart';
+import 'package:ct312hm01_temp/presentation/common_widgets/custom_appbar_auth.dart';
+import 'package:ct312hm01_temp/presentation/screens/auth/app_auth_provider.dart';
+import 'package:ct312hm01_temp/presentation/screens/auth/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -56,6 +56,8 @@ class _BodyState extends State<Body> {
               try {
                 await authProvider.loginWithEmail(
                     _emailController.text, _passwordController.text);
+                //avoid context after await
+                if (!mounted) return;
                 Navigator.of(context).pushNamed(ChatScreen.route);
                 ScaffoldMessenger.of(context).showSnackBar(
                   customNoticeSnackbar(
