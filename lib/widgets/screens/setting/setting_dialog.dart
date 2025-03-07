@@ -4,6 +4,8 @@ import 'package:ct312hm01_temp/widgets/screens/setting/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../auth/login_screen.dart';
+
 void showSettingDialog(BuildContext context){
   showDialog(
 
@@ -80,6 +82,7 @@ class SignOutButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(onPressed: (){
       context.read<AppAuthProvider>().signOut(context);
+      Navigator.of(context).pushNamed(LoginScreen.route);
     }, child: Row(
       children: [
         Icon(Icons.exit_to_app),
