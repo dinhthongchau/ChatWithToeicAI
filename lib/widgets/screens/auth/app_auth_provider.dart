@@ -57,8 +57,7 @@ String getEmailAfterSignIn() {
   return FirebaseAuth.instance.currentUser?.email ?? "No email available";
 }
 
-Future<void> signOut(BuildContext context) async {
+Future<void> signOut() async {
   await FirebaseAuth.instance.signOut();
-  //check mounted before use
-  if (!context.mounted) return;
+
 }}

@@ -81,7 +81,7 @@ class SignOutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(onPressed: (){
-      context.read<AppAuthProvider>().signOut(context);
+      context.read<AppAuthProvider>().signOut();
       Navigator.of(context).pushNamed(LoginScreen.route);
     }, child: Row(
       children: [
