@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "87104062393",
+    "project_id": "chatai0703",
+    "storage_bucket": "chatai0703.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87104062393:android:4df342f79821871954ec68",
+        "android_client_info": {
+          "package_name": "com.example.ct312hm01_temp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "87104062393-m8msbp78jla4de6iipnbeml2vabog2qt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5_TVRYTne6U8ihFzjQkTQaLHZS-NRqZA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "87104062393-m8msbp78jla4de6iipnbeml2vabog2qt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
