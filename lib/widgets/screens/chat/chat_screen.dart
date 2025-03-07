@@ -11,6 +11,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 class ChatScreen extends StatefulWidget {
   static const String route = "/chat";
 
+  const ChatScreen({super.key});
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -148,7 +150,7 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void _sendMessage() {
+    void sendMessage() {
       final message = _inputController.text;
       if (message.isNotEmpty) {
         context.read<ChatProvider>().addMessage(message);
@@ -284,7 +286,7 @@ class Body extends StatelessWidget {
                                 customNoticeSnackbar(context,"Please ask question", true),
                               );
                             } else {
-                              _sendMessage();
+                              sendMessage();
                             }
                           });
                 },

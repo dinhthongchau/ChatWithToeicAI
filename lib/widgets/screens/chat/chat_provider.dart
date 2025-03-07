@@ -9,7 +9,7 @@ class ChatProvider with ChangeNotifier {
   ChatProvider(this._chatModel) ;
   //init
   List<String> _messages = [];
-  List<String> _chatHistory=[];
+  final List<String> _chatHistory=[];
   String? _currentSessionId;
   LoadStatus _loadStatus = LoadStatus.Init;
 
@@ -73,31 +73,29 @@ class ChatProvider with ChangeNotifier {
     Clipboard.setData(ClipboardData(text: message));
     notifyListeners();
   }
-// Thêm vào class ChatProvider
+
   void renameChatSession(String oldSessionId, String newSessionId) {
-    // Kiểm tra nếu tên mới đã tồn tại trong lịch sử
+
     if (_chatHistory.contains(newSessionId)) {
-      return; // Không đổi tên nếu trùng để tránh xung đột
+      return;
     }
 
-    // Lấy dữ liệu của phiên cũ
+
     final sessionMessages = Hive.box('chatHistory').get(oldSessionId);
 
-    // Xóa phiên cũ khỏi Hive và danh sách lịch sử
+
     Hive.box('chatHistory').delete(oldSessionId);
     _chatHistory.remove(oldSessionId);
 
-    // Thêm phiên mới với tên mới và dữ liệu cũ
+
     Hive.box('chatHistory').put(newSessionId, sessionMessages);
     _chatHistory.add(newSessionId);
     Hive.box('chatHistory').put('history', _chatHistory);
-
-    // Nếu phiên hiện tại đang được chọn, cập nhật currentSessionId
     if (_currentSessionId == oldSessionId) {
       _currentSessionId = newSessionId;
     }
 
-    notifyListeners(); // Thông báo để giao diện cập nhật
+    notifyListeners();
   }
 
   void deleteChatSession(String sessionId) {

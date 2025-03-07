@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../auth/app_auth_provider.dart';
 import '../chat/chat_provider.dart';
 import '../setting/setting_dialog.dart';
 import '../setting/theme_provider.dart';
@@ -12,6 +14,17 @@ class ChatHistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Page();
+  }
+}
+
+class Page extends StatelessWidget {
+  const Page({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomHistoryAppBar(),
       bottomNavigationBar: BottomNavigationBar(),
@@ -21,6 +34,8 @@ class ChatHistoryScreen extends StatelessWidget {
 }
 
 class CustomHistoryAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const CustomHistoryAppBar({super.key});
+
 
 
   @override
@@ -40,6 +55,8 @@ class CustomHistoryAppBar extends StatelessWidget implements PreferredSizeWidget
 }
 
 class BottomNavigationBar extends StatelessWidget {
+  const BottomNavigationBar({super.key});
+
 
 
   @override
@@ -72,14 +89,14 @@ class BottomNavigationBar extends StatelessWidget {
                   ),
                   SizedBox(width: 10), // Khoảng cách giữa avatar và tên
                   // Tên người dùng
-                  // Text(
-                  //   "Nguyễn Nhật A", // Giá trị ví dụ
-                  //   style: TextStyle(
-                  //     fontSize: 16,
-                  //     fontWeight: FontWeight.w500,
-                  //     color: themeProvider.textColor, // Màu chữ theo theme
-                  //   ),
-                  // ),
+                  Text(
+                    "${context.read<AppAuthProvider>().getEmailAfterSignIn()}" ,// Giá trị ví dụ
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: themeProvider.textColor, // Màu chữ theo theme
+                    ),
+                  ),
                 ],
               ),
 
@@ -100,6 +117,8 @@ class BottomNavigationBar extends StatelessWidget {
 }
 
 class Body extends StatelessWidget {
+  const Body({super.key});
+
 
 
 
@@ -154,8 +173,7 @@ class Body extends StatelessWidget {
                                 width: 2.0, // Độ dày của viền
                               ), // Chỉnh border radius
                       ),
-                      // padding: EdgeInsets.all(10),
-                      // margin: EdgeInsets.all(10),
+
                       child: GestureDetector(
                         onLongPress: () => showOptionsDialog(context, sessionId),
                         child: ListTile(

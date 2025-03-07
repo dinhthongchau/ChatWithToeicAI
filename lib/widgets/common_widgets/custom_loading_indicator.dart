@@ -4,7 +4,7 @@ class CustomLoadingIndicator extends StatelessWidget {
   final Color color;
   final double size;
 
-  const CustomLoadingIndicator({
+  const CustomLoadingIndicator({super.key, 
     this.color = Colors.blue,
     this.size = 40.0,
   });

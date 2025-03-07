@@ -1,4 +1,4 @@
-import 'package:ct312hm01_temp/widgets/screens/chat/chat_screen.dart';
+import 'package:ct312hm01_temp/widgets/screens/auth/app_auth_provider.dart';
 import 'package:ct312hm01_temp/widgets/screens/guide/guide_screen.dart';
 import 'package:ct312hm01_temp/widgets/screens/setting/theme_provider.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +15,8 @@ void showSettingDialog(BuildContext context){
           mainAxisSize: MainAxisSize.min,
           children: [
             ThemeModeChange(),
-            NavigateToGuideScreen()
+            NavigateToGuideScreen(),
+            SignOutButton(),
           ],
         ),
         actions: [
@@ -69,5 +70,21 @@ class ThemeModeChange extends StatelessWidget {
             }),
       ],
     );
+  }
+}
+
+class SignOutButton extends StatelessWidget {
+  const SignOutButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(onPressed: (){
+      context.read<AppAuthProvider>().signOut(context);
+    }, child: Row(
+      children: [
+        Icon(Icons.exit_to_app),
+        Text("Sign out"),
+      ],
+    ));
   }
 }

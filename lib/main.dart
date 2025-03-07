@@ -1,22 +1,33 @@
 import 'package:ct312hm01_temp/models/chat_model.dart';
+import 'package:ct312hm01_temp/widgets/screens/auth/login_screen.dart';
 import 'package:ct312hm01_temp/widgets/screens/chat/chat_provider.dart';
 import 'package:ct312hm01_temp/widgets/screens/setting/theme_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'firebase_options.dart';
 import 'routes.dart';
-import 'widgets/screens/chat/chat_screen.dart';
+import 'widgets/screens/auth/app_auth_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform, // support by firebase_options.dart
+  );
+  //initial Hive
   await Hive.initFlutter();
   await Hive.openBox('chatHistory');
+  //load .env
   await dotenv.load(fileName: "lib/dotenv");
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +40,12 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => ThemeProvider(),
-        )
+        ),
+        ChangeNotifierProvider(
+          create: (_) => AppAuthProvider (),
+        ),
+
+
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
@@ -40,7 +56,7 @@ class MyApp extends StatelessWidget {
             themeMode: themeProvider.isLightTheme ? ThemeMode.light : ThemeMode.dark,
             debugShowCheckedModeBanner: false,
             onGenerateRoute: mainRoute,
-            initialRoute: ChatScreen.route,
+            initialRoute: FirebaseAuth.instance.currentUser== null ? LoginScreen.route : LoginScreen.route,
           );
         },
 
