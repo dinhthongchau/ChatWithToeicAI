@@ -18,13 +18,21 @@ void showSettingDialog(BuildContext context){
           children: [
             ThemeModeChange(),
             NavigateToGuideScreen(),
-            SignOutButton(),
           ],
         ),
         actions: [
-          TextButton(onPressed: (){
-            Navigator.of(context).pop();
-          }, child: const Text("Close"))
+          Row(
+              mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween,
+              children: [
+                SignOutButton(),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("Close")),
+              ],
+            ),
         ],
       );
   }
@@ -64,7 +72,7 @@ class ThemeModeChange extends StatelessWidget {
     return Row(
       children: [
         Icon(Icons.light_mode),
-        Text("Open Light Mode"),
+        Text("   Open Light Mode"),
         Switch(
             value: context.read<ThemeProvider>().isLightTheme,
             onChanged: (bool value) {
