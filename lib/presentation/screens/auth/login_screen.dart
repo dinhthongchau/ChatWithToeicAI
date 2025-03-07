@@ -145,10 +145,23 @@ class _BodyState extends State<Body> {
             if (context.mounted) {
               Navigator.of(context).pushNamed(ChatScreen.route);
               ScaffoldMessenger.of(context).showSnackBar(
-                customNoticeSnackbar(
-                  context,
-                  "Sign in ok with ${authProvider.getEmailAfterSignIn()} ",
-                  false,
+                SnackBar(
+                  content: Text(
+                    "Sign in with ${authProvider.getEmailAfterSignIn()}",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  behavior: SnackBarBehavior.floating,
+                  margin: EdgeInsets.symmetric(
+                    horizontal: 50, 
+                    vertical: MediaQuery.of(context).size.height *
+                        0.4, 
+                  ),
+                  backgroundColor: Color.fromARGB(255, 129, 224, 133).withOpacity(0.5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  duration: Duration(seconds: 3),
                 ),
               );
             }
