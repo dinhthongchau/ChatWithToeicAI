@@ -261,7 +261,7 @@ class Body extends StatelessWidget {
                     hintStyle: TextStyle(
                         color: context
                             .watch<ThemeProvider>()
-                            .textColor), // Màu gợi ý
+                            .textColor.withAlpha((0.1 * 255).toInt())), // Màu gợi ý
                     border: InputBorder.none,
                   ),
                 ),

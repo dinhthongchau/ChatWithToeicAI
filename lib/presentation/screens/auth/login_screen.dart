@@ -79,6 +79,13 @@ class _BodyState extends State<Body> {
             _buildLoginButton(authProvider, themeProvider),
             const SizedBox(height: 12),
             Center(
+              child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(ChatScreen.route);
+                  },
+                  child: Text("Login as guest")),
+            ),
+            Center(
               child: MouseRegion(
                 onEnter: (_) => setState(() => _isHovered = true),
                 onExit: (_) => setState(() => _isHovered = false),
@@ -87,21 +94,25 @@ class _BodyState extends State<Body> {
                     Navigator.of(context).pushNamed(RegisterScreen.route);
                   },
                   style: ButtonStyle(
-                    overlayColor: MaterialStateProperty.all(
+                    overlayColor: WidgetStateProperty.all(
                       _isHovered
                           ? themeProvider.userMessageColor.withOpacity(0.3)
                           : Colors.transparent,
                     ),
                   ),
-                  child: Text(
-                    "Don't have an account? Register",
-                    style: TextStyle(
-                      color: _isHovered
-                          ? themeProvider.userMessageColor
-                          : themeProvider.textColor,
-                      fontWeight:
-                          _isHovered ? FontWeight.bold : FontWeight.normal,
-                    ),
+                  child: Column(
+                    children: [
+                      Text(
+                        "Don't have an account? Register",
+                        style: TextStyle(
+                          color: _isHovered
+                              ? themeProvider.userMessageColor
+                              : themeProvider.textColor,
+                          fontWeight:
+                              _isHovered ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -153,11 +164,11 @@ class _BodyState extends State<Body> {
                   ),
                   behavior: SnackBarBehavior.floating,
                   margin: EdgeInsets.symmetric(
-                    horizontal: 50, 
-                    vertical: MediaQuery.of(context).size.height *
-                        0.4, 
+                    horizontal: 50,
+                    vertical: MediaQuery.of(context).size.height * 0.4,
                   ),
-                  backgroundColor: Color.fromARGB(255, 129, 224, 133).withOpacity(0.5),
+                  backgroundColor:
+                      Color.fromARGB(255, 129, 224, 133).withOpacity(0.5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
