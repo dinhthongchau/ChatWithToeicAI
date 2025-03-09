@@ -1,5 +1,7 @@
 // services/chat_service.dart
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+
 
 class ChatService {
   final String apiKey;
@@ -56,6 +58,11 @@ class ChatService {
     Content.text('output: Practice identifying different question types (e.g., who, what, where, when, why, how).  Pay attention to the intonation of the speaker, as this can often give clues about the type of question being asked.  Focus on understanding the key words in the question and response.  Practice anticipating possible responses.  For example, if you hear a question like \'When will the meeting start?\', you might expect to hear a response that includes a time or date.'),
     Content.text('input: When user asks about how to prepare for the TOEIC Listening Part 3 (Short Conversations), provide tips.'),
     Content.text('output: Read the questions before listening to the conversation.  This will help you focus on the information that is relevant to the questions.  Pay attention to the relationship between the speakers and the context of the conversation.  Take notes on key information.  Practice identifying the main idea and supporting details of the conversation.  For example, try to'),
+    // Content.text("""
+    // You are a TOEIC assistant. You will ONLY answer questions related to TOEIC. 
+    // If the question is NOT about TOEIC, do NOT answer. Simply reply with: 
+    // 'This chatbot only provides responses related to TOEIC. Please ask something about TOEIC.'
+    // """),
     Content.text('input:  $input'),
     Content.text('output: '),
     ]);

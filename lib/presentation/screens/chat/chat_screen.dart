@@ -7,6 +7,7 @@ import '../../common_widgets/custom_loading_indicator.dart';
 import 'chat_provider.dart';
 import '../setting/theme_provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ChatScreen extends StatefulWidget {
   static const String route = "/chat";
@@ -20,8 +21,7 @@ class ChatScreen extends StatefulWidget {
 class ChatScreenState extends State<ChatScreen> {
   final TextEditingController _inputController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  late ChatProvider chatProvider =
-      context.read<ChatProvider>();
+  late ChatProvider chatProvider = context.read<ChatProvider>();
 
   @override
   void initState() {
@@ -201,15 +201,14 @@ class Body extends StatelessWidget {
                             bottomRight: Radius.circular(16),
                           ),
                         ),
-                        child: Text(
-                          chatProvider.messages[index],
-                          style: TextStyle(
-                            fontSize: 18,
-                            // color: isUserMessage
-                            //     ? themeProvider
-                            //         .textColor
-                            //     : Colors.white,
-                            color: themeProvider.textColor,
+                        child: MarkdownBody(
+                          data: chatProvider.messages[index],
+                          selectable: true,
+                          styleSheet: MarkdownStyleSheet(
+                            p: TextStyle(
+                              fontSize: 16,
+                              color: themeProvider.textColor,
+                            ),
                           ),
                         ),
                       ),
