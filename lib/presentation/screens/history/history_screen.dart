@@ -5,6 +5,7 @@ import '../chat/chat_provider.dart';
 import '../setting/setting_dialog.dart';
 import '../setting/theme_provider.dart';
 import 'history_options_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ChatHistoryScreen extends StatelessWidget {
   static const String route = "/chatHistory";
@@ -87,9 +88,9 @@ class BottomNavigationBar extends StatelessWidget {
                         .inputBorderColor, // Màu nền nếu không có ảnh
                   ),
                   SizedBox(width: 10), // Khoảng cách giữa avatar và tên
-                  // Tên người dùng
+                  // Get Email(via UserID) from Firebase Authentication
                   Text(
-                    context.read<AppAuthProvider>().getEmailAfterSignIn() ,// Giá trị ví dụ
+                    FirebaseAuth.instance.currentUser?.email ?? "Guest",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -126,6 +127,10 @@ class Body extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer2<ChatProvider, ThemeProvider>(
       builder: (context, chatProvider, themeProvider, child) {
+        //final chatProvider = context.watch<ChatProvider>();
+        chatProvider.loadMessages(); // Load data when opening screen
+        chatProvider.debugHiveData();
+        final chatHistory = chatProvider.chatHistory;
         return Container(
           margin: EdgeInsets.all(10),
           child: Column(
@@ -133,7 +138,7 @@ class Body extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Conservations"),
+                  Text("Conversations"),
                   TextButton(
                       child: Row(
                         children: [
@@ -141,52 +146,53 @@ class Body extends StatelessWidget {
                           Icon(Icons.add),
                         ],
                       ),
-                      onPressed: () => {
-                            context.read<ChatProvider>().startNewSession(),
-                            Navigator.pop(context)
+                      onPressed: () {
+                            chatProvider.startNewSession();
+                            Navigator.pop(context);
                           })
                 ],
               ),
               Expanded(
-                child: ListView.builder(
-                  itemCount: chatProvider.chatHistory.length,
-                  itemBuilder: (context, index) {
-                    final sessionId = chatProvider.chatHistory[index];
-                    final isSelected =
-                        sessionId == chatProvider.currentSessionId;
-                    return Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-                      margin: EdgeInsets.symmetric(vertical: 5),
-                      decoration: BoxDecoration(
-                        color: themeProvider.chatBoxColor,
-                        borderRadius: BorderRadius.circular(16),
-                        border: isSelected
-                            ? Border.all(
-                                color: Colors.white,
-                                width: 2.0,
-                              )
-                            : Border.all(
-                                //color: themeProvider.historyBorderColor,
+                child: chatHistory.isEmpty
+                    ? const Center(child: Text("No chat history available."))
+                    : ListView.builder(
+                      itemCount: chatHistory.length,
+                      itemBuilder: (context, index) {
+                        final sessionId = chatHistory[index];
+                        final isSelected =
+                            sessionId == chatProvider.currentSessionId;
+                    return GestureDetector(
+                            onLongPress: () {
+                              showOptionsDialog(context, sessionId);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 14),
+                              margin: const EdgeInsets.symmetric(vertical: 5),
+                              decoration: BoxDecoration(
+                                color: themeProvider.chatBoxColor,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? Colors.white
+                                      : themeProvider.historyBorderColor,
+                                  width: 2.0,
+                                ),
+                              ),
+                              child: ListTile(
+                                title: Text(
+                                  sessionId,
+                                  style:
+                                      TextStyle(color: themeProvider.textColor),
+                                ),
+                                onTap: () {
+                                  chatProvider.loadSession(sessionId);
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
+                          );
 
-                                width: 2.0, // Độ dày của viền
-                              ), // Chỉnh border radius
-                      ),
-
-                      child: GestureDetector(
-                        onLongPress: () => showOptionsDialog(context, sessionId),
-                        child: ListTile(
-                          title: Text(
-                            chatProvider.chatHistory[index],
-                            style: TextStyle(color: themeProvider.textColor),
-                          ),
-                          onTap: () {
-                            chatProvider.loadSession(sessionId);
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ),
-                    );
                   },
                 ),
               ),

@@ -22,6 +22,9 @@ Future<void> main() async {
   //initial Hive
   await Hive.initFlutter();
   await Hive.openBox('chatHistory');
+  String userUID = FirebaseAuth.instance.currentUser?.uid ?? "guest";
+  await Hive.openBox('chatHistory_$userUID');
+
   //load .env
   await dotenv.load(fileName: "lib/dotenv");
   runApp(MyApp());

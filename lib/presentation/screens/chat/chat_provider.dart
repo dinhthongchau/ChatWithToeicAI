@@ -3,47 +3,56 @@ import 'package:ct312hm01_temp/services/chat_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ChatProvider with ChangeNotifier {
   final ChatService _chatModel;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   ChatProvider(this._chatModel);
 
   //init
   List<String> _messages = [];
-  final List<String> _chatHistory =
-      Hive.box('chatHistory').get('history', defaultValue: <String>[]) ?? [];
-
   String? _currentSessionId;
   LoadStatus _loadStatus = LoadStatus.init;
+  String? get _userId => _auth.currentUser?.uid;
 
-  //get
+  List<String> get chatHistory {
+    if (_userId == null) return [];
+    return Hive.box('chatHistory')
+            .get('history_$_userId', defaultValue: <String>[]) ??
+        [];
+  }
+
   LoadStatus get loadStatus => _loadStatus;
-
   List<String> get messages => _messages;
-
   String? get currentSessionId => _currentSessionId;
 
-  List<String> get chatHistory => _chatHistory;
-
-  //store chat current to Hive ( key,value is history: sessionId[], each sessionId: message[] )
+  // Save chat history for each user
   void saveCurrentSession(String sessionId) {
-    Hive.box('chatHistory').put(sessionId, _messages);
-    if (!_chatHistory.contains(sessionId)) {
-      _chatHistory.add(sessionId);
-      Hive.box('chatHistory').put('history', _chatHistory);
+    if (_userId == null) return;
+
+    final box = Hive.box('chatHistory');
+    box.put('$_userId-$sessionId', _messages);
+
+    List<String> userHistory =
+        box.get('history_$_userId', defaultValue: <String>[]);
+    if (!userHistory.contains(sessionId)) {
+      userHistory.add(sessionId);
+      box.put('history_$_userId', userHistory);
     }
+
     notifyListeners();
   }
 
-  //load a chat in history
+  // Load chat history by sessionId
   void loadSession(String sessionId) {
     if (_messages.isNotEmpty && _currentSessionId != null) {
       saveCurrentSession(_currentSessionId!);
     }
     _currentSessionId = sessionId;
-    _messages =
-        Hive.box('chatHistory').get(sessionId, defaultValue: <String>[]);
+    _messages = Hive.box('chatHistory')
+        .get('$_userId-$sessionId', defaultValue: <String>[]);
     notifyListeners();
   }
 
@@ -58,7 +67,7 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  //add message with call api on current chat
+  // Send message and call API to get response
   Future<void> addMessage(String message) async {
     if (_currentSessionId == null) {
       startNewSession();
@@ -75,7 +84,6 @@ class ChatProvider with ChangeNotifier {
       }
     } catch (e) {
       _loadStatus = LoadStatus.error;
-
     }
   }
 
@@ -85,19 +93,23 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // rename session chat
   void renameChatSession(String oldSessionId, String newSessionId) {
-    if (_chatHistory.contains(newSessionId)) {
+    if (_userId == null || chatHistory.contains(newSessionId)) {
       return;
     }
 
-    final sessionMessages = Hive.box('chatHistory').get(oldSessionId);
+    final sessionMessages =
+        Hive.box('chatHistory').get('$_userId-$oldSessionId');
 
-    Hive.box('chatHistory').delete(oldSessionId);
-    _chatHistory.remove(oldSessionId);
+    Hive.box('chatHistory').delete('$_userId-$oldSessionId');
+    List<String> userHistory = chatHistory;
+    userHistory.remove(oldSessionId);
 
-    Hive.box('chatHistory').put(newSessionId, sessionMessages);
-    _chatHistory.add(newSessionId);
-    Hive.box('chatHistory').put('history', _chatHistory);
+    Hive.box('chatHistory').put('$_userId-$newSessionId', sessionMessages);
+    userHistory.add(newSessionId);
+
+    Hive.box('chatHistory').put('history_$_userId', userHistory);
     if (_currentSessionId == oldSessionId) {
       _currentSessionId = newSessionId;
     }
@@ -105,13 +117,17 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Delete session chat
   void deleteChatSession(String sessionId) {
-    Hive.box('chatHistory').delete(sessionId);
-    _chatHistory.remove(sessionId);
-    Hive.box('chatHistory').put('history', _chatHistory);
+    if (_userId == null) return;
+    Hive.box('chatHistory').delete('$_userId-$sessionId');
+    List<String> userHistory = chatHistory;
+    userHistory.remove(sessionId);
+    Hive.box('chatHistory').put('history_$_userId', userHistory);
     notifyListeners();
   }
 
+  // Scroll to bottom
   void scrollToBottom(ScrollController scrollController) {
     if (!scrollController.hasClients) {
       return;
@@ -130,5 +146,27 @@ class ChatProvider with ChangeNotifier {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       scrollToBottom(scrollController);
     });
+  }
+
+  void loadMessages() {
+    if (_userId == null) return;
+
+    final box = Hive.box('chatHistory');
+    _messages = List<String>.from(
+        box.get('$_userId-$_currentSessionId', defaultValue: []));
+
+    notifyListeners();
+  }
+
+  void debugHiveData() {
+    final box = Hive.box('chatHistory');
+    print("Saved sessions: ${box.get('history_$_userId')}");
+    print(
+        "Messages for session $_currentSessionId: ${box.get('$_userId-$_currentSessionId')}");
+  }
+
+  void resetChat() {
+    _messages.clear();
+    notifyListeners();
   }
 }

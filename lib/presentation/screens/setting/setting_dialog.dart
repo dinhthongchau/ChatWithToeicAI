@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../auth/login_screen.dart';
+import '../chat/chat_provider.dart';
 
 void showSettingDialog(BuildContext context){
   showDialog(
@@ -89,6 +90,7 @@ class SignOutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(onPressed: (){
+      context.read<ChatProvider>().resetChat();
       context.read<AppAuthProvider>().signOut();
       Navigator.of(context).pushNamed(LoginScreen.route);
     }, child: Row(
