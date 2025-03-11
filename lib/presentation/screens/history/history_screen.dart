@@ -6,6 +6,7 @@ import '../setting/setting_dialog.dart';
 import '../setting/theme_provider.dart';
 import 'history_options_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../chat/chat_screen.dart';
 
 class ChatHistoryScreen extends StatelessWidget {
   static const String route = "/chatHistory";
@@ -33,10 +34,9 @@ class Page extends StatelessWidget {
   }
 }
 
-class CustomHistoryAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CustomHistoryAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
   const CustomHistoryAppBar({super.key});
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +56,6 @@ class CustomHistoryAppBar extends StatelessWidget implements PreferredSizeWidget
 
 class BottomNavigationBar extends StatelessWidget {
   const BottomNavigationBar({super.key});
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -119,27 +117,30 @@ class BottomNavigationBar extends StatelessWidget {
 class Body extends StatelessWidget {
   const Body({super.key});
 
-
-
-
-
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ChatProvider, ThemeProvider>(
-      builder: (context, chatProvider, themeProvider, child) {
-        //final chatProvider = context.watch<ChatProvider>();
-        chatProvider.loadMessages(); // Load data when opening screen
-        chatProvider.debugHiveData();
-        final chatHistory = chatProvider.chatHistory;
-        return Container(
-          margin: EdgeInsets.all(10),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Conversations"),
-                  TextButton(
+    return GestureDetector(
+      onHorizontalDragEnd: (details) {
+        if (details.primaryVelocity! > 0) {
+          // drag right -> route to ChatScreen
+          Navigator.pushReplacementNamed(context, ChatScreen.route);
+        }
+      },
+      child: Consumer2<ChatProvider, ThemeProvider>(
+        builder: (context, chatProvider, themeProvider, child) {
+          chatProvider.loadMessages(); // Load data when opening screen
+          chatProvider.debugHiveData();
+          final chatHistory = chatProvider.chatHistory;
+
+          return Container(
+            margin: EdgeInsets.all(10),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Conversations"),
+                    TextButton(
                       child: Row(
                         children: [
                           Text("New"),
@@ -147,59 +148,60 @@ class Body extends StatelessWidget {
                         ],
                       ),
                       onPressed: () {
-                            chatProvider.startNewSession();
-                            Navigator.pop(context);
-                          })
-                ],
-              ),
-              Expanded(
-                child: chatHistory.isEmpty
-                    ? const Center(child: Text("No chat history available."))
-                    : ListView.builder(
-                      itemCount: chatHistory.length,
-                      itemBuilder: (context, index) {
-                        final sessionId = chatHistory[index];
-                        final isSelected =
-                            sessionId == chatProvider.currentSessionId;
-                    return GestureDetector(
-                            onLongPress: () {
-                              showOptionsDialog(context, sessionId);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 14),
-                              margin: const EdgeInsets.symmetric(vertical: 5),
-                              decoration: BoxDecoration(
-                                color: themeProvider.chatBoxColor,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: isSelected
-                                      ? Colors.white
-                                      : themeProvider.historyBorderColor,
-                                  width: 2.0,
-                                ),
-                              ),
-                              child: ListTile(
-                                title: Text(
-                                  sessionId,
-                                  style:
-                                      TextStyle(color: themeProvider.textColor),
-                                ),
-                                onTap: () {
-                                  chatProvider.loadSession(sessionId);
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ),
-                          );
-
-                  },
+                        chatProvider.startNewSession();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        );
-      },
+                Expanded(
+                  child: chatHistory.isEmpty
+                      ? const Center(child: Text("No chat history available."))
+                      : ListView.builder(
+                          itemCount: chatHistory.length,
+                          itemBuilder: (context, index) {
+                            final sessionId = chatHistory[index];
+                            final isSelected =
+                                sessionId == chatProvider.currentSessionId;
+                            return GestureDetector(
+                              onLongPress: () {
+                                showOptionsDialog(context, sessionId);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 14),
+                                margin: const EdgeInsets.symmetric(vertical: 5),
+                                decoration: BoxDecoration(
+                                  color: themeProvider.chatBoxColor,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? Colors.white
+                                        : themeProvider.historyBorderColor,
+                                    width: 2.0,
+                                  ),
+                                ),
+                                child: ListTile(
+                                  title: Text(
+                                    sessionId,
+                                    style: TextStyle(
+                                        color: themeProvider.textColor),
+                                  ),
+                                  onTap: () {
+                                    chatProvider.loadSession(sessionId);
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

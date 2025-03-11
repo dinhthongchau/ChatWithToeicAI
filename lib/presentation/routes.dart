@@ -31,11 +31,31 @@ Route<dynamic> mainRoute(RouteSettings settings) {
   return PageRouteBuilder(
     settings: settings,
     pageBuilder: (context, animation, secondaryAnimation) => page,
+    // transitionsBuilder: (context, animation, secondaryAnimation, child) {
+    //   return FadeTransition(
+    //     opacity: animation,
+    //     child: child,
+    //   );
+    // },
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return FadeTransition(
-        opacity: animation,
-        child: child,
+      var slideAnimation = Tween<Offset>(
+        begin: Offset(1.0, 0.0), // Trượt từ phải sang trái
+        end: Offset.zero,
+      ).animate(animation);
+
+      var fadeAnimation = Tween<double>(
+        begin: 0.0,
+        end: 1.0,
+      ).animate(animation);
+
+      return SlideTransition(
+        position: slideAnimation,
+        child: FadeTransition(
+          opacity: fadeAnimation,
+          child: child,
+        ),
       );
     },
+
   );
 }
