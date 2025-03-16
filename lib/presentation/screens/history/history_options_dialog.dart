@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../chat/chat_provider.dart';
+import '../../../provider/chat_provider.dart';
 
 void showOptionsDialog(BuildContext context, String sessionId) {
   final TextEditingController renameController = TextEditingController(text: sessionId);

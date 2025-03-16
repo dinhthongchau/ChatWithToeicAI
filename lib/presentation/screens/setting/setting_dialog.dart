@@ -1,11 +1,11 @@
-import 'package:ct312hm01_temp/presentation/screens/auth/app_auth_provider.dart';
+import 'package:ct312hm01_temp/provider/app_auth_provider.dart';
 import 'package:ct312hm01_temp/presentation/screens/guide/guide_screen.dart';
-import 'package:ct312hm01_temp/presentation/screens/setting/theme_provider.dart';
+import 'package:ct312hm01_temp/provider/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../auth/login_screen.dart';
-import '../chat/chat_provider.dart';
+import '../../../provider/chat_provider.dart';
 
 void showSettingDialog(BuildContext context){
   showDialog(

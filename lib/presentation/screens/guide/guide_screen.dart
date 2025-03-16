@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../chat/chat_screen.dart';
-import '../setting/theme_provider.dart';
+import '../../../provider/theme_provider.dart';
 
 class GuideScreen extends StatelessWidget {
   static const String route = "/guide";

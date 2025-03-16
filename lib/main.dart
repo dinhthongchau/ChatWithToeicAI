@@ -1,38 +1,53 @@
 import 'package:ct312hm01_temp/services/chat_service.dart';
 import 'package:ct312hm01_temp/presentation/screens/auth/login_screen.dart';
-import 'package:ct312hm01_temp/presentation/screens/chat/chat_provider.dart';
-import 'package:ct312hm01_temp/presentation/screens/setting/theme_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:ct312hm01_temp/provider/chat_provider.dart';
+import 'package:ct312hm01_temp/provider/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-import 'firebase_options.dart';
 import 'presentation/routes.dart';
-import 'presentation/screens/auth/app_auth_provider.dart';
+import 'provider/app_auth_provider.dart';
+import 'database/db_helper.dart';
+import 'models/user_model.dart';
+
 Future<void> initializeApp() async {
-
-}
-Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform, // support by firebase_options.dart
-  );
-  //initial Hive
-  await Hive.initFlutter();
-  await Hive.openBox('chatHistory');
-  String userUID = FirebaseAuth.instance.currentUser?.uid ?? "guest";
-  await Hive.openBox('chatHistory_$userUID');
 
-  //load .env
+  // Khởi tạo SQLite
+  await DBHelper.database;
+
+  // Load biến môi trường
   await dotenv.load(fileName: "lib/dotenv");
+}
+
+Future<void> main() async {
+  await initializeApp();
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  User? _currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentUser();
+  }
+
+  Future<void> _loadCurrentUser() async {
+    // Giả sử bạn có một cơ chế lưu user đăng nhập gần nhất (có thể dùng SharedPreferences)
+    // Ở đây tôi để tạm null -> Màn hình Login sẽ hiển thị
+    setState(() {
+      _currentUser = null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +76,8 @@ class MyApp extends StatelessWidget {
             themeMode: themeProvider.isLightTheme ? ThemeMode.light : ThemeMode.dark,
             debugShowCheckedModeBanner: false,
             onGenerateRoute: mainRoute,
-            initialRoute: FirebaseAuth.instance.currentUser== null ? LoginScreen.route : LoginScreen.route,
+            // Chuyển hướng: nếu user chưa đăng nhập -> LoginScreen
+            initialRoute: _currentUser == null ? LoginScreen.route : LoginScreen.route,
           );
         },
 

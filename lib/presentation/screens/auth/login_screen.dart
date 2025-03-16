@@ -1,11 +1,11 @@
 import 'package:ct312hm01_temp/presentation/common_widgets/custom_appbar_auth.dart';
-import 'package:ct312hm01_temp/presentation/screens/auth/app_auth_provider.dart';
+import 'package:ct312hm01_temp/provider/app_auth_provider.dart';
 import 'package:ct312hm01_temp/presentation/screens/auth/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../common_widgets/custom_notice_snackbar.dart';
 import '../chat/chat_screen.dart';
-import '../setting/theme_provider.dart';
+import '../../../provider/theme_provider.dart';
 
 class LoginScreen extends StatelessWidget {
   static const String route = "/login";
@@ -154,34 +154,39 @@ class _BodyState extends State<Body> {
             await authProvider.loginWithEmail(
                 _emailController.text, _passwordController.text);
             if (context.mounted) {
+              print("Login successful");
               Navigator.of(context).pushNamed(ChatScreen.route);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    "Sign in with ${authProvider.getEmailAfterSignIn()}",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  behavior: SnackBarBehavior.floating,
-                  margin: EdgeInsets.symmetric(
-                    horizontal: 50,
-                    vertical: MediaQuery.of(context).size.height * 0.4,
-                  ),
-                  backgroundColor:
-                      Color.fromARGB(255, 129, 224, 133).withOpacity(0.5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  duration: Duration(seconds: 3),
-                ),
-              );
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => ChatScreen()));
+
+              // ScaffoldMessenger.of(context).showSnackBar(
+              //   SnackBar(
+              //     content: Text(
+              //       "Sign in with ${authProvider.getEmailAfterSignIn()}",
+              //       textAlign: TextAlign.center,
+              //       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              //     ),
+              //     behavior: SnackBarBehavior.floating,
+              //     margin: EdgeInsets.symmetric(
+              //       horizontal: 50,
+              //       vertical: MediaQuery.of(context).size.height * 0.4,
+              //     ),
+              //     backgroundColor:
+              //         Color.fromARGB(255, 129, 224, 133).withOpacity(0.5),
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(20),
+              //     ),
+              //     duration: Duration(seconds: 3),
+              //   ),
+              // );
             }
           } catch (e) {
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                customNoticeSnackbar(context, "$e", true),
-              );
-            }
+              print("Login error: $e");
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  customNoticeSnackbar(context, "$e", true),
+                );
+              }
           }
         },
         style: ElevatedButton.styleFrom(

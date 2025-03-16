@@ -1,7 +1,10 @@
+// xử lý giao tiếp với API Gemini.
+
 // services/chat_service.dart
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-
+import '../database/db_helper.dart';
+import 'package:sqflite/sqflite.dart';
 
 class ChatService {
   final String apiKey;
@@ -67,6 +70,36 @@ class ChatService {
     Content.text('output: '),
     ]);
     return response.text;
+  }
+
+  // Tạo một đoạn chat mới
+  static Future<int> createChatHistory(int userId) async {
+    final db = await DBHelper.database;
+    return await db.insert('chat_history', {'user_id': userId});
+  }
+
+  // Lưu tin nhắn chat vào chat_response
+  static Future<void> saveChatMessage(
+      int chatId, String userMessage, String aiResponse) async {
+    final db = await DBHelper.database;
+    await db.insert('chat_response', {
+      'chat_id': chatId,
+      'user_message': userMessage,
+      'ai_response': aiResponse,
+      'timestamp': DateTime.now().toIso8601String(),
+    });
+  }
+
+  // Lấy lịch sử chat của một user
+  static Future<List<Map<String, dynamic>>> fetchChatHistory(int userId) async {
+    final db = await DBHelper.database;
+    return await db.rawQuery('''
+      SELECT chat_response.*
+      FROM chat_response
+      JOIN chat_history ON chat_response.chat_id = chat_history.id
+      WHERE chat_history.user_id = ?
+      ORDER BY chat_response.timestamp DESC
+    ''', [userId]);
   }
 }
 

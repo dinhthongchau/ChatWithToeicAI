@@ -4,8 +4,8 @@ import 'package:ct312hm01_temp/presentation/screens/history/history_screen.dart'
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../common_widgets/custom_loading_indicator.dart';
-import 'chat_provider.dart';
-import '../setting/theme_provider.dart';
+import '../../../provider/chat_provider.dart';
+import '../../../provider/theme_provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
@@ -281,9 +281,9 @@ class Body extends StatelessWidget {
                                   .textColor), // Màu icon theo theme
                           onPressed: () {
                             if ( _inputController.text.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                customNoticeSnackbar(context,"Please ask question", true),
-                              );
+                              // ScaffoldMessenger.of(context).showSnackBar(
+                              //   customNoticeSnackbar(context,"Please ask question", true),
+                              // );
                             } else {
                               sendMessage();
                             }

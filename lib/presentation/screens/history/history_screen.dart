@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../auth/app_auth_provider.dart';
-import '../chat/chat_provider.dart';
+import '../../../provider/app_auth_provider.dart';
+import '../../../provider/chat_provider.dart';
 import '../setting/setting_dialog.dart';
-import '../setting/theme_provider.dart';
+import '../../../provider/theme_provider.dart';
 import 'history_options_dialog.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import '../chat/chat_screen.dart';
 
 class ChatHistoryScreen extends StatelessWidget {
@@ -33,6 +33,7 @@ class Page extends StatelessWidget {
     );
   }
 }
+
 
 class CustomHistoryAppBar extends StatelessWidget
     implements PreferredSizeWidget {
@@ -88,7 +89,8 @@ class BottomNavigationBar extends StatelessWidget {
                   SizedBox(width: 10), // Khoảng cách giữa avatar và tên
                   // Get Email(via UserID) from Firebase Authentication
                   Text(
-                    FirebaseAuth.instance.currentUser?.email ?? "Guest",
+                    // FirebaseAuth.instance.currentUser?.email ?? 
+                    "Guest",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -127,80 +129,107 @@ class Body extends StatelessWidget {
         }
       },
       child: Consumer2<ChatProvider, ThemeProvider>(
-        builder: (context, chatProvider, themeProvider, child) {
-          chatProvider.loadMessages(); // Load data when opening screen
-          chatProvider.debugHiveData();
-          final chatHistory = chatProvider.chatHistory;
+          builder: (context, chatProvider, themeProvider, child) {
+        chatProvider.loadMessages(); // Load data when opening screen
+        chatProvider.getChatHistory().then((history) {
+            print("Chat messages loaded: $history");
+          }).catchError((error) {
+            print("Error loading messages: $error");
+          });
 
-          return Container(
-            margin: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Conversations"),
-                    TextButton(
-                      child: Row(
-                        children: [
-                          Text("New"),
-                          Icon(Icons.add),
-                        ],
+        // chatProvider.debugHiveData();
+        final chatHistory = chatProvider.getChatHistory();
+        print("Chat history data: $chatHistory");
+
+        return FutureBuilder<List<String>>(
+          future: chatProvider.getChatHistory(), // Lấy dữ liệu chat history
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                  child:
+                      CircularProgressIndicator()); // Hiển thị vòng quay khi đang load
+            }
+            print("FutureBuilder snapshot state: ${snapshot.connectionState}");
+
+            if (snapshot.hasError) {
+              return Center(child: Text("Error: ${snapshot.error}"));
+            }
+            final chatHistory = snapshot.data ?? [];
+
+
+            return Container(
+              margin: EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Conversations"),
+                      TextButton(
+                        child: Row(
+                          children: [
+                            Text("New"),
+                            Icon(Icons.add),
+                          ],
+                        ),
+                        onPressed: () {
+                          chatProvider.startNewSession();
+                          Navigator.pop(context);
+                        },
                       ),
-                      onPressed: () {
-                        chatProvider.startNewSession();
-                        Navigator.pop(context);
-                      },
+                    ],
+                  ),
+                  Expanded(
+                    child: chatHistory.isEmpty || chatHistory == null
+                        ? const Center(
+                            child: Text("No chat history available."))
+                        : ListView.builder(
+                            itemCount: chatHistory.length,
+                            itemBuilder: (context, index) {
+                              final sessionId = chatHistory[index] ?? "Unknown session";
+                              final isSelected =
+                                  sessionId == chatProvider.currentSessionId;
+                              return GestureDetector(
+                                onLongPress: () {
+                                  showOptionsDialog(context, sessionId);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 14),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: themeProvider.chatBoxColor,
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? Colors.white
+                                          : themeProvider.historyBorderColor,
+                                      width: 2.0,
+                                    ),
+                                  ),
+                                  child: ListTile(
+                                    title: Text(
+                                      sessionId,
+                                      style: TextStyle(
+                                          color: themeProvider.textColor),
+                                    ),
+                                    onTap: () {
+                                      chatProvider.loadSession(sessionId);
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                     ),
                   ],
                 ),
-                Expanded(
-                  child: chatHistory.isEmpty
-                      ? const Center(child: Text("No chat history available."))
-                      : ListView.builder(
-                          itemCount: chatHistory.length,
-                          itemBuilder: (context, index) {
-                            final sessionId = chatHistory[index];
-                            final isSelected =
-                                sessionId == chatProvider.currentSessionId;
-                            return GestureDetector(
-                              onLongPress: () {
-                                showOptionsDialog(context, sessionId);
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 14),
-                                margin: const EdgeInsets.symmetric(vertical: 5),
-                                decoration: BoxDecoration(
-                                  color: themeProvider.chatBoxColor,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? Colors.white
-                                        : themeProvider.historyBorderColor,
-                                    width: 2.0,
-                                  ),
-                                ),
-                                child: ListTile(
-                                  title: Text(
-                                    sessionId,
-                                    style: TextStyle(
-                                        color: themeProvider.textColor),
-                                  ),
-                                  onTap: () {
-                                    chatProvider.loadSession(sessionId);
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                ),
-              ],
-            ),
+              );
+            },
           );
-        },
+        }
       ),
     );
   }

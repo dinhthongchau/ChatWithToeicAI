@@ -15,9 +15,13 @@ dependencies:
   shared_preferences: ^2.5.2
   flutter_dotenv: ^5.2.1
   fluttertoast: ^8.2.12 #hiển thị thông báo sau đó tự động tắt, khác với ShowDialog là user phải tắt
-  firebase_core: ^3.12.1
-  firebase_auth: ^5.5.1
+#  firebase_core: ^3.12.1
+#  firebase_auth: ^5.5.1
   flutter_markdown: ^0.6.17
+  sqflite: ^2.3.0
+  uuid: ^4.2.1
+  path: ^1.9.1
+  path_provider: ^2.1.1
 
 
 
@@ -33,4 +37,5 @@ flutter:
     #using this instead of .env for website compatibility
     - lib/dotenv
     - assets/avatar/logo.png
+    - assets/chat_app.db
 
