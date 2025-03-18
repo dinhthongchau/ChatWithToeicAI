@@ -7,7 +7,7 @@
 
 import 'package:ct312hm01_temp/core/enum/load_status.dart';
 import 'package:ct312hm01_temp/services/chat_service.dart';
-import 'package:ct312hm01_temp/database/chat_db.dart';
+import 'package:ct312hm01_temp/data/database/chat_db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

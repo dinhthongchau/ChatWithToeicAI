@@ -3,7 +3,7 @@ import 'package:ct312hm01_temp/presentation/screens/auth/register_screen.dart';
 import 'package:ct312hm01_temp/provider/chat_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../database/user_db.dart';
+import '../../../data/database/user_db.dart';
 import '../../common_widgets/custom_notice_snackbar.dart';
 import '../chat/chat_screen.dart';
 import '../../../provider/theme_provider.dart';

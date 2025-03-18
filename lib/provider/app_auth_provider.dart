@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ct312hm01_temp/core/enum/load_status.dart';
-import 'package:ct312hm01_temp/database/user_db.dart';
-import 'package:ct312hm01_temp/models/user_model.dart';
+import 'package:ct312hm01_temp/data/database/user_db.dart';
+import 'package:ct312hm01_temp/data/models/user_model.dart';
 
 class AppAuthProvider extends ChangeNotifier {
   LoadStatus _loadStatus = LoadStatus.init;

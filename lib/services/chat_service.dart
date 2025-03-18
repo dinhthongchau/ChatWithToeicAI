@@ -2,7 +2,7 @@
 
 // services/chat_service.dart
 import 'package:google_generative_ai/google_generative_ai.dart';
-import '../database/db_helper.dart';
+import '../data/database/db_helper.dart';
 
 
 class ChatService {

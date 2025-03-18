@@ -1,4 +1,4 @@
-import '../database/db_helper.dart';
+import '../data/database/db_helper.dart';
 
 
 class UserService {
