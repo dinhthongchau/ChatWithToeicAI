@@ -1,5 +1,4 @@
 import 'package:ct312hm01_temp/core/enum/load_status.dart';
-import 'package:ct312hm01_temp/presentation/common_widgets/custom_notice_snackbar.dart';
 import 'package:ct312hm01_temp/presentation/screens/history/history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

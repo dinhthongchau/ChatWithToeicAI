@@ -1,9 +1,7 @@
-import 'package:ct312hm01_temp/provider/chat_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:ct312hm01_temp/core/enum/load_status.dart';
 import 'package:ct312hm01_temp/database/user_db.dart';
 import 'package:ct312hm01_temp/models/user_model.dart';
-import 'package:provider/provider.dart';
 
 class AppAuthProvider extends ChangeNotifier {
   LoadStatus _loadStatus = LoadStatus.init;

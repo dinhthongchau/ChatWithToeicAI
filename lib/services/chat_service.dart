@@ -2,9 +2,8 @@
 
 // services/chat_service.dart
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import '../database/db_helper.dart';
-import 'package:sqflite/sqflite.dart';
+
 
 class ChatService {
   final String apiKey;

@@ -2,7 +2,6 @@ import 'package:ct312hm01_temp/provider/app_auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'login_screen.dart';
-import '../chat/chat_screen.dart';
 import '../../../provider/theme_provider.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -147,18 +146,17 @@ class _BodyState extends State<Body> {
           try {
             await authProvider.signUpWithEmail(_emailController.text,
                 _passwordController.text, _confirmPasswordController.text);
-            if (context.mounted) {
+              if (!mounted) return;
               Navigator.of(context).pushNamed(LoginScreen.route);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text("Registration successful! - Welcome to TOEIC AI CHATBOX")),
               );
-            }
+
           } catch (e) {
-            if (context.mounted) {
+            if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text("$e")),
               );
-            }
           }
         },
         style: ElevatedButton.styleFrom(

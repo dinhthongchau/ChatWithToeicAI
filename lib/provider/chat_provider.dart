@@ -13,8 +13,6 @@ import 'package:flutter/services.dart';
 
 class ChatProvider with ChangeNotifier {
   final ChatService _chatModel;
-  final ChatDB _chatDatabase = ChatDB();
-
   ChatProvider(this._chatModel);
 
   //init
@@ -27,13 +25,13 @@ class ChatProvider with ChangeNotifier {
 
   int? get userId => _userId;
   String? get userEmail => _userEmail;
-  bool _isCreatingSession = false;
+  final bool _isCreatingSession = false;
   bool get isCreatingSession => _isCreatingSession;
 
 
   List<String> _chatHistory = [];
   List<String> get chatHistory => _chatHistory;
-  bool _isHistoryLoaded = false;
+  final bool _isHistoryLoaded = false;
   Future<void> loadChatHistory() async {
     if (_userId == null || _isHistoryLoaded) return; //prevent loading
     _chatHistory.clear(); //clear it before new loading
@@ -156,8 +154,9 @@ void scrollToBottom(ScrollController scrollController) {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!scrollController.hasClients ||
-          !scrollController.position.hasContentDimensions) return;
+      if (!scrollController.hasClients || !scrollController.position.hasContentDimensions) {
+        return;
+      }
 
       final maxScroll = scrollController.position.maxScrollExtent;
       if (maxScroll <= 0) return;

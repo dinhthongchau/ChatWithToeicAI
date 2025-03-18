@@ -1,4 +1,3 @@
-import 'package:ct312hm01_temp/presentation/common_widgets/custom_appbar_auth.dart';
 import 'package:ct312hm01_temp/provider/app_auth_provider.dart';
 import 'package:ct312hm01_temp/presentation/screens/auth/register_screen.dart';
 import 'package:ct312hm01_temp/provider/chat_provider.dart';
@@ -98,7 +97,7 @@ class _BodyState extends State<Body> {
                   style: ButtonStyle(
                     overlayColor: WidgetStateProperty.all(
                       _isHovered
-                          ? themeProvider.userMessageColor.withOpacity(0.3)
+                          ? themeProvider.userMessageColor.withValues(alpha: 0.3)
                           : Colors.transparent,
                     ),
                   ),
@@ -159,22 +158,22 @@ class _BodyState extends State<Body> {
             // get by email
             int? userId = await UserDB.getUserIdByEmail(_emailController.text);
             if (userId != null ) {
-              context.read<ChatProvider>().setUserId(userId,_emailController.text);
+                if (!mounted) return;
+                context.read<ChatProvider>().setUserId(userId,_emailController.text);
 
-              if (context.mounted) {
+
                 print("Login successful");
                 Navigator.of(context).pushNamed(ChatScreen.route);
-              }
+
             }
 
 
           } catch (e) {
               print("Login error: $e");
-              if (context.mounted) {
+              if (!mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   customNoticeSnackbar(context, "$e", true),
                 );
-              }
           }
         },
         style: ElevatedButton.styleFrom(

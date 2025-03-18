@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../provider/app_auth_provider.dart';
 import '../../../provider/chat_provider.dart';
 import '../setting/setting_dialog.dart';
 import '../../../provider/theme_provider.dart';
 import 'history_options_dialog.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import '../chat/chat_screen.dart';
 
 class ChatHistoryScreen extends StatelessWidget {
@@ -144,7 +142,7 @@ class Body extends StatelessWidget {
             return ListView.builder(
               itemCount: chatHistory.length,
               itemBuilder: (context, index) {
-                final sessionId = chatHistory[index] ?? "Unknown session";
+                final sessionId = chatHistory[index] ;
                 final isSelected = sessionId == chatProvider.currentSessionId;
                 return GestureDetector(
                   onLongPress: () {
