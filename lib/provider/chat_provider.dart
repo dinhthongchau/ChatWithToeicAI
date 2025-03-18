@@ -23,9 +23,14 @@ class ChatProvider with ChangeNotifier {
   LoadStatus _loadStatus = LoadStatus.init;
   // String? _userId;
   int? _userId;
+  String? _userEmail;
 
-  // List<String> get chatHistory =>
-  //     _userId == null ? [] : ChatDB.getUserChatHistory(_userId!);
+  int? get userId => _userId;
+  String? get userEmail => _userEmail;
+  bool _isCreatingSession = false;
+  bool get isCreatingSession => _isCreatingSession;
+
+
   List<String> _chatHistory = [];
   List<String> get chatHistory => _chatHistory;
   Future<void> loadChatHistory() async {
@@ -48,8 +53,9 @@ class ChatProvider with ChangeNotifier {
   List<String> get messages => _messages;
   String? get currentSessionId => _currentSessionId;
 
-  void setUserId(int userId) {
+  void setUserId(int userId, String userEmail) {
     _userId = userId;
+    _userEmail = userEmail;
     print("User ID set: $_userId");
     loadChatHistory(); // Tải lịch sử chat ngay sau khi đặt userId
     notifyListeners();
@@ -81,6 +87,7 @@ class ChatProvider with ChangeNotifier {
 
   //start new chat
   Future<void> startNewSession() async {
+    //if (_isCreatingSession) return; // p revent duplicate calls
     //save if it has messages
     if (_messages.isNotEmpty && _currentSessionId != null) {
       saveCurrentSession(_currentSessionId!);

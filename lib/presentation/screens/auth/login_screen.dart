@@ -156,36 +156,18 @@ class _BodyState extends State<Body> {
 
 
             await authProvider.loginWithEmail(_emailController.text, _passwordController.text);
-            // Lget by email
+            // get by email
             int? userId = await UserDB.getUserIdByEmail(_emailController.text);
-             context.read<ChatProvider>().setUserId(userId!);
-            if (context.mounted) {
-              print("Login successful");
-              Navigator.of(context).pushNamed(ChatScreen.route);
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => ChatScreen()));
+            if (userId != null ) {
+              context.read<ChatProvider>().setUserId(userId,_emailController.text);
 
-              // ScaffoldMessenger.of(context).showSnackBar(
-              //   SnackBar(
-              //     content: Text(
-              //       "Sign in with ${authProvider.getEmailAfterSignIn()}",
-              //       textAlign: TextAlign.center,
-              //       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              //     ),
-              //     behavior: SnackBarBehavior.floating,
-              //     margin: EdgeInsets.symmetric(
-              //       horizontal: 50,
-              //       vertical: MediaQuery.of(context).size.height * 0.4,
-              //     ),
-              //     backgroundColor:
-              //         Color.fromARGB(255, 129, 224, 133).withOpacity(0.5),
-              //     shape: RoundedRectangleBorder(
-              //       borderRadius: BorderRadius.circular(20),
-              //     ),
-              //     duration: Duration(seconds: 3),
-              //   ),
-              // );
+              if (context.mounted) {
+                print("Login successful");
+                Navigator.of(context).pushNamed(ChatScreen.route);
+              }
             }
+
+
           } catch (e) {
               print("Login error: $e");
               if (context.mounted) {

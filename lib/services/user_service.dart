@@ -20,17 +20,7 @@ class UserService {
     return users.isNotEmpty ? users.first['id'] as int : null;
   }
 
-  // getEmailAfterSignIn
-  static Future<String?> getEmailAfterSignIn(int userId) async {
-    final db = await DBHelper.database;
-    final List<Map<String, dynamic>> users = await db.query(
-      'users',
-      columns: ['username'],
-      where: 'id = ?',
-      whereArgs: [userId],
-    );
-    return users.isNotEmpty ? users.first['username'] as String : null;
-  }
+
 
   //SQLite - ta không cần lưu session, chỉ đơn giản là lưu lại userID 
   //của người dùng khi đăng nhập, sao đó dùng các hàm để lấy dữ liệu của userID đó

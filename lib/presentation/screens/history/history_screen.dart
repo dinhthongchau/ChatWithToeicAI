@@ -86,10 +86,9 @@ class BottomNavigationBar extends StatelessWidget {
                     backgroundColor: themeProvider
                         .inputBorderColor, // Màu nền nếu không có ảnh
                   ),
-                  SizedBox(width: 10), // Khoảng cách giữa avatar và tên
-                  // Get Email(via UserID) from Firebase Authentication
+                  SizedBox(width: 10),
                   Text(
-                    // FirebaseAuth.instance.currentUser?.email ?? 
+                    context.read<ChatProvider>().userEmail??
                     "Guest",
                     style: TextStyle(
                       fontSize: 16,

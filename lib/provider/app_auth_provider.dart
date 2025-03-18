@@ -58,9 +58,7 @@ class AppAuthProvider extends ChangeNotifier {
     }
   }
 
-  String getEmailAfterSignIn() {
-    return _currentUser?.username ?? "No email available";
-  }
+
 
   Future<void> signOut() async {
     _currentUser = null;

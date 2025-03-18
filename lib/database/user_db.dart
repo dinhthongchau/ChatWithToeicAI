@@ -30,13 +30,13 @@ class UserDB {
     final db = await DBHelper.database;
     List<Map<String, dynamic>> result = await db.query(
       'users',
-      columns: ['id'],
-      where: 'email = ?',
+      columns: ['user_id'],
+      where: 'username = ?',
       whereArgs: [email],
     );
 
     if (result.isNotEmpty) {
-      return result.first['id'] as int;
+      return result.first['user_id'] as int;
     }
     return null;
   }
