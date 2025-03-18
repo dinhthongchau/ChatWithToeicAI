@@ -40,11 +40,11 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  
+
   Future<List<String>> getChatHistory() async {
-    if (_userId == null) return ["USER ID IS NULL "];
+    if (_userId == null) return [];
     List<String> newHistory = await ChatDB.getUserChatHistory(_userId!);
-    return newHistory.toSet().toList();
+    return newHistory;
   }
 
 
@@ -55,6 +55,7 @@ class ChatProvider with ChangeNotifier {
   void setUserId(int userId, String userEmail) {
     _userId = userId;
     _userEmail = userEmail;
+    _chatHistory.clear();
     print("User ID set: $_userId");
     notifyListeners();
   }

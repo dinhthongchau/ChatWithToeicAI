@@ -46,9 +46,8 @@ class ChatDB {
       whereArgs: [userId],
       orderBy: 'chat_sessions_id DESC',
     );
-    print("Chat history result from DB: $result"); // Debug log
 
-    return result.map((e) => e['chat_sessions_id'].toString()).toSet().toList();
+    return result.map((e) => e['chat_sessions_id'].toString()).toList();
   }
 
   // Thêm một đoạn tin nhắn mới vào một phiên trò chuyện
