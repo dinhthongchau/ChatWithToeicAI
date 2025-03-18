@@ -5,8 +5,6 @@ import 'package:ct312hm01_temp/provider/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'presentation/routes.dart';
 import 'provider/app_auth_provider.dart';
 import 'data/database/db_helper.dart';
@@ -15,8 +13,7 @@ import 'data/models/user_model.dart';
 Future<void> initializeApp() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Cấu hình databaseFactory cho Web
-  databaseFactory = databaseFactoryFfiWeb;
+
   await DBHelper.database;
 
   // Load biến môi trường
