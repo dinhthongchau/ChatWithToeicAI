@@ -33,10 +33,10 @@ class ChatProvider with ChangeNotifier {
 
   List<String> _chatHistory = [];
   List<String> get chatHistory => _chatHistory;
+  bool _isHistoryLoaded = false;
   Future<void> loadChatHistory() async {
-    if (_userId == null) {
-      print("Nothing to load");
-    };
+    if (_userId == null || _isHistoryLoaded) return; //prevent loading
+    _chatHistory.clear(); //clear it before new loading
     _chatHistory = await ChatDB.getUserChatHistory(_userId!);
     print("Loaded chat history in loadChatHistory: $_chatHistory");
     notifyListeners();
@@ -44,8 +44,9 @@ class ChatProvider with ChangeNotifier {
 
   
   Future<List<String>> getChatHistory() async {
-    if (_userId == null) return ["ok"];
-    return await ChatDB.getUserChatHistory(_userId!);
+    if (_userId == null) return ["USER ID IS NULL "];
+    List<String> newHistory = await ChatDB.getUserChatHistory(_userId!);
+    return newHistory.toSet().toList();
   }
 
 
@@ -57,7 +58,6 @@ class ChatProvider with ChangeNotifier {
     _userId = userId;
     _userEmail = userEmail;
     print("User ID set: $_userId");
-    loadChatHistory(); // Tải lịch sử chat ngay sau khi đặt userId
     notifyListeners();
   }
 
@@ -85,23 +85,20 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  //start new chat
   Future<void> startNewSession() async {
-    //if (_isCreatingSession) return; // p revent duplicate calls
-    //save if it has messages
-    if (_messages.isNotEmpty && _currentSessionId != null) {
-      saveCurrentSession(_currentSessionId!);
-    }
+    if (_userId == null) return;
 
-    _messages = [];
-    _currentSessionId = 'Chat ${DateTime.now()}';
-    //create new chat in database
-    if ( _userId != null){
-      await ChatDB.createChatSession(_userId!);
+    // Kiểm tra nếu có session chưa có tin nhắn thì sử dụng session đó
+    int? newSessionId = await ChatDB.createChatSession(_userId!);
+
+    if (newSessionId != null) {
+      _currentSessionId = newSessionId.toString();
+      _messages.clear();
       await loadChatHistory();
+      notifyListeners();
     }
-    notifyListeners();
   }
+
 
   // Send message and call API to get response
   Future<void> addMessage(String message) async {

@@ -7,10 +7,36 @@ import 'db_helper.dart';
 
 class ChatDB {
   // Tạo một phiên trò chuyện mới cho một user
-  static Future<int> createChatSession(int userId) async {
+  static Future<int?> createChatSession(int userId) async {
     final db = await DBHelper.database;
+
+    // Kiểm tra nếu có session chưa có tin nhắn thì không tạo mới
+    List<Map<String, dynamic>> existingSessions = await db.query(
+      'chat_sessions',
+      where: 'user_id = ?',
+      whereArgs: [userId],
+      orderBy: 'chat_sessions_id DESC',
+      limit: 1,
+    );
+
+    if (existingSessions.isNotEmpty) {
+      int existingSessionId = existingSessions.first['chat_sessions_id'];
+      List<Map<String, dynamic>> messages = await db.query(
+        'chat_messages',
+        where: 'chat_sessions_id = ?',
+        whereArgs: [existingSessionId],
+      );
+
+      // Nếu session chưa có tin nhắn thì trả về session cũ, không tạo mới
+      if (messages.isEmpty) {
+        return existingSessionId;
+      }
+    }
+
+    // Nếu không có session hợp lệ, tạo mới
     return await db.insert('chat_sessions', {'user_id': userId});
   }
+
 
   // Lấy danh sách các phiên trò chuyện của một user
   static Future<List<String>> getUserChatHistory(int userId) async {
@@ -23,7 +49,7 @@ class ChatDB {
     );
     print("Chat history result from DB: $result"); // Debug log
 
-    return result.map((e) => e['chat_sessions_id'].toString()).toList();
+    return result.map((e) => e['chat_sessions_id'].toString()).toSet().toList();
   }
 
   // Thêm một đoạn tin nhắn mới vào một phiên trò chuyện
