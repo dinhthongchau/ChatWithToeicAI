@@ -25,4 +25,19 @@ class UserDB {
     }
     return null;
   }
+
+  static Future<int?> getUserIdByEmail(String email) async {
+    final db = await DBHelper.database;
+    List<Map<String, dynamic>> result = await db.query(
+      'users',
+      columns: ['id'],
+      where: 'email = ?',
+      whereArgs: [email],
+    );
+
+    if (result.isNotEmpty) {
+      return result.first['id'] as int;
+    }
+    return null;
+  }
 }

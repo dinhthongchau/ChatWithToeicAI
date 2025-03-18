@@ -29,14 +29,17 @@ class ChatProvider with ChangeNotifier {
   List<String> _chatHistory = [];
   List<String> get chatHistory => _chatHistory;
   Future<void> loadChatHistory() async {
-    if (_userId == null) return;
+    if (_userId == null) {
+      print("Nothing to load");
+    };
     _chatHistory = await ChatDB.getUserChatHistory(_userId!);
+    print("Loaded chat history in loadChatHistory: $_chatHistory");
     notifyListeners();
   }
 
   
   Future<List<String>> getChatHistory() async {
-    if (_userId == null) return [];
+    if (_userId == null) return ["ok"];
     return await ChatDB.getUserChatHistory(_userId!);
   }
 
@@ -47,6 +50,7 @@ class ChatProvider with ChangeNotifier {
 
   void setUserId(int userId) {
     _userId = userId;
+    print("User ID set: $_userId");
     loadChatHistory(); // Tải lịch sử chat ngay sau khi đặt userId
     notifyListeners();
   }
@@ -54,8 +58,13 @@ class ChatProvider with ChangeNotifier {
   // Save chat history for each user
   Future<void> saveCurrentSession(String sessionId) async {
     if (_userId == null) return;
-    await ChatDB.saveChatSession(_userId!, sessionId, _messages);
-    notifyListeners();
+    try {
+      await ChatDB.saveChatSession(_userId!, sessionId, _messages);
+      notifyListeners();
+    }
+   catch(e){
+      print(e);
+   }
   }
 
   // Load chat history by sessionId
@@ -71,13 +80,19 @@ class ChatProvider with ChangeNotifier {
   }
 
   //start new chat
-  void startNewSession() {
+  Future<void> startNewSession() async {
+    //save if it has messages
     if (_messages.isNotEmpty && _currentSessionId != null) {
       saveCurrentSession(_currentSessionId!);
     }
 
     _messages = [];
     _currentSessionId = 'Chat ${DateTime.now()}';
+    //create new chat in database
+    if ( _userId != null){
+      await ChatDB.createChatSession(_userId!);
+      await loadChatHistory();
+    }
     notifyListeners();
   }
 

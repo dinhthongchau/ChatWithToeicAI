@@ -1,8 +1,10 @@
 import 'package:ct312hm01_temp/presentation/common_widgets/custom_appbar_auth.dart';
 import 'package:ct312hm01_temp/provider/app_auth_provider.dart';
 import 'package:ct312hm01_temp/presentation/screens/auth/register_screen.dart';
+import 'package:ct312hm01_temp/provider/chat_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../database/user_db.dart';
 import '../../common_widgets/custom_notice_snackbar.dart';
 import '../chat/chat_screen.dart';
 import '../../../provider/theme_provider.dart';
@@ -151,8 +153,12 @@ class _BodyState extends State<Body> {
       child: ElevatedButton(
         onPressed: () async {
           try {
-            await authProvider.loginWithEmail(
-                _emailController.text, _passwordController.text);
+
+
+            await authProvider.loginWithEmail(_emailController.text, _passwordController.text);
+            // Lget by email
+            int? userId = await UserDB.getUserIdByEmail(_emailController.text);
+             context.read<ChatProvider>().setUserId(userId!);
             if (context.mounted) {
               print("Login successful");
               Navigator.of(context).pushNamed(ChatScreen.route);

@@ -94,7 +94,7 @@ class ChatScreenState extends State<ChatScreen> {
                   onPressed: () {
                     chatProvider.startNewSession();
                     Fluttertoast.showToast(
-                      msg: "New chat",
+                      msg: "New chat created",
                       toastLength: Toast.LENGTH_LONG,
                       gravity: ToastGravity.CENTER,
                       //Flutter web không hổ trợ căn giữa cho Fluttertoast, nó sẽ hiển thị ở góc phải trên màn hình

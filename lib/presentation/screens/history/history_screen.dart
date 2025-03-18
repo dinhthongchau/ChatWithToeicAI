@@ -130,7 +130,7 @@ class Body extends StatelessWidget {
       },
       child: Consumer2<ChatProvider, ThemeProvider>(
           builder: (context, chatProvider, themeProvider, child) {
-        chatProvider.loadMessages(); // Load data when opening screen
+        // chatProvider.loadMessages(); // Load data when opening screen
         chatProvider.getChatHistory().then((history) {
             print("Chat messages loaded: $history");
           }).catchError((error) {
@@ -156,7 +156,7 @@ class Body extends StatelessWidget {
             }
             final chatHistory = snapshot.data ?? [];
 
-
+            print("Final chat history: $chatHistory");
             return Container(
               margin: EdgeInsets.all(10),
               child: Column(
@@ -174,7 +174,7 @@ class Body extends StatelessWidget {
                         ),
                         onPressed: () {
                           chatProvider.startNewSession();
-                          Navigator.pop(context);
+                          // Navigator.pop(context); don;t want navi
                         },
                       ),
                     ],
