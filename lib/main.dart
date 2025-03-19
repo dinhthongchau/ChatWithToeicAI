@@ -5,6 +5,8 @@ import 'package:ct312hm01_temp/provider/chat_provider.dart';
 import 'package:ct312hm01_temp/provider/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:provider/provider.dart';
 import 'presentation/routes.dart';
 import 'provider/app_auth_provider.dart';
@@ -70,13 +72,15 @@ class MyAppState extends State<MyApp> {
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
-          return MaterialApp(
+          return GetMaterialApp(
             title: 'Chat with TOEIC AI',
             theme: ThemeData.light(),
             darkTheme: ThemeData.dark(),
             themeMode: themeProvider.isLightTheme ? ThemeMode.light : ThemeMode.dark,
             debugShowCheckedModeBanner: false,
-            onGenerateRoute: mainRoute,
+            getPages: routes,
+            defaultTransition: Transition.zoom,
+            transitionDuration: Duration(milliseconds: 300),
             initialRoute: _currentUser == null ? LoginScreen.route : ChatScreen.route,
           );
         },

@@ -2,6 +2,8 @@ import 'package:ct312hm01_temp/core/enum/load_status.dart';
 import 'package:ct312hm01_temp/presentation/screens/auth/login_screen.dart';
 import 'package:ct312hm01_temp/presentation/screens/history/history_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 import '../../common_widgets/custom_loading_indicator.dart';
 import '../../../provider/chat_provider.dart';
@@ -57,8 +59,7 @@ class ChatScreenState extends State<ChatScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  onPressed: () =>
-                      Navigator.of(context).pushNamed(ChatHistoryScreen.route),
+                  onPressed: () => Navigator.of(context).pushNamed(ChatHistoryScreen.route),
                   icon: Icon(
                     Icons.format_list_bulleted,
                     color: themeProvider.textColor,

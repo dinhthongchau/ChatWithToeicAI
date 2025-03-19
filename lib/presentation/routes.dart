@@ -1,61 +1,36 @@
+import 'package:flutter/material.dart';
 import 'package:ct312hm01_temp/presentation/screens/history/history_screen.dart';
 import 'package:ct312hm01_temp/presentation/screens/guide/guide_screen.dart';
-import 'screens/auth/login_screen.dart';
-import 'screens/auth/register_screen.dart';
-import 'screens/chat/chat_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:ct312hm01_temp/presentation/screens/auth/login_screen.dart';
+import 'package:ct312hm01_temp/presentation/screens/auth/register_screen.dart';
+import 'package:ct312hm01_temp/presentation/screens/chat/chat_screen.dart';
+import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:get/get_navigation/src/routes/transitions_type.dart';
 
-Route<dynamic> mainRoute(RouteSettings settings) {
-  Widget page;
+final List<GetPage> routes = [
+  GetPage(
+      name: ChatScreen.route,
+      page: () => ChatScreen(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300)),
+  GetPage(
+    name: ChatHistoryScreen.route,
+    page: () => ChatHistoryScreen(),
+    transition: Transition.leftToRight,
+    transitionDuration: Duration(milliseconds: 300),
+  ),
+  GetPage(
+      name: GuideScreen.route,
+      page: () => GuideScreen(),
+  ),
+  GetPage(
+      name: LoginScreen.route,
+      page: () => LoginScreen(),
+      transition: Transition.circularReveal,
+      transitionDuration: Duration(milliseconds: 300)),
+  GetPage(
+      name: RegisterScreen.route,
+      page: () => RegisterScreen(),
 
-  switch (settings.name) {
-    case ChatScreen.route:
-      page = ChatScreen();
-      break;
-    case ChatHistoryScreen.route:
-      page = ChatHistoryScreen();
-      break;
-    case GuideScreen.route:
-      page = GuideScreen();
-      break;
-    case LoginScreen.route:
-      page = LoginScreen();
-      break;
-    case RegisterScreen.route:
-      page = RegisterScreen();
-      break;
-    default:
-      page = ChatScreen();
-  }
-
-  return PageRouteBuilder(
-    settings: settings,
-    pageBuilder: (context, animation, secondaryAnimation) => page,
-    // transitionsBuilder: (context, animation, secondaryAnimation, child) {
-    //   return FadeTransition(
-    //     opacity: animation,
-    //     child: child,
-    //   );
-    // },
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      var slideAnimation = Tween<Offset>(
-        begin: Offset(1.0, 0.0), // Trượt từ phải sang trái
-        end: Offset.zero,
-      ).animate(animation);
-
-      var fadeAnimation = Tween<double>(
-        begin: 0.0,
-        end: 1.0,
-      ).animate(animation);
-
-      return SlideTransition(
-        position: slideAnimation,
-        child: FadeTransition(
-          opacity: fadeAnimation,
-          child: child,
-        ),
-      );
-    },
-
-  );
-}
+  ),
+];

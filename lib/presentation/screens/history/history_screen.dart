@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 import '../../../provider/chat_provider.dart';
 import '../setting/setting_dialog.dart';
@@ -24,10 +26,18 @@ class Page extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomHistoryAppBar(),
-      bottomNavigationBar: BottomNavigationBar(),
-      body: Body(),
+    return GestureDetector(
+      onHorizontalDragEnd: (details) {
+        if (details.primaryVelocity! > 0) { // Right swipe detected
+          Navigator.of(context).pushNamed(ChatScreen.route);
+        }
+      },
+
+      child: Scaffold(
+        appBar: CustomHistoryAppBar(),
+        bottomNavigationBar: BottomNavigationBar(),
+        body: Body(),
+      ),
     );
   }
 }
@@ -118,14 +128,7 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onHorizontalDragEnd: (details) {
-        if (details.primaryVelocity! > 0) {
-          // drag right -> route to ChatScreen
-          Navigator.pushReplacementNamed(context, ChatScreen.route);
-        }
-      },
-      child: Consumer2<ChatProvider, ThemeProvider>(
+    return  Consumer2<ChatProvider, ThemeProvider>(
           builder: (context, chatProvider, themeProvider, child) {
 
         final chatHistory = chatProvider.getChatHistory();
@@ -177,7 +180,7 @@ class Body extends StatelessWidget {
         );
 
           }
-      ),
+      
     );
   }
 }

@@ -23,6 +23,11 @@ class ChatProvider with ChangeNotifier {
   int? _userId;
   String? _userEmail;
 
+
+  LoadStatus get loadStatus => _loadStatus;
+  List<String> get messages => _messages;
+  String? get currentSessionId => _currentSessionId;
+
   int? get userId => _userId;
   String? get userEmail => _userEmail;
   final bool _isCreatingSession = false;
@@ -31,6 +36,7 @@ class ChatProvider with ChangeNotifier {
 
   List<String> _chatHistory = [];
   List<String> get chatHistory => _chatHistory;
+
   Future<void> loadChatHistory() async {
     if (_userId == null ) return; //prevent loading
     _chatHistory.clear(); //clear it before new loading
@@ -46,10 +52,6 @@ class ChatProvider with ChangeNotifier {
     return newHistory;
   }
 
-
-  LoadStatus get loadStatus => _loadStatus;
-  List<String> get messages => _messages;
-  String? get currentSessionId => _currentSessionId;
 
   void setUserId(int userId, String userEmail) {
     _userId = userId;
