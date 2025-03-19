@@ -164,6 +164,11 @@ class ChatProvider with ChangeNotifier {
   Future<void> deleteChatSession(String sessionId) async {
     if (_userId == null) return;
     await ChatDB.deleteChatSession(_userId!, sessionId);
+    await loadChatHistory(); // Tải lại lịch sử chat để cập nhật danh sách
+    if (_currentSessionId == sessionId) {
+      _currentSessionId = null; // Xóa session hiện tại nếu nó bị xóa
+      _messages.clear(); // Xóa tin nhắn nếu đang ở session đó
+    }
     notifyListeners();
   }
 

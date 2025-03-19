@@ -156,7 +156,6 @@ class ChatDB {
     );
     if (session.isEmpty) return;
 
-    // No need to cast to int, sessionId is already a String
     await db.delete('chat_messages',
         where: 'chat_sessions_id = ?', whereArgs: [sessionId]);
     await db.delete('chat_sessions',

@@ -43,6 +43,7 @@ void showOptionsDialog(BuildContext context, String sessionId) {
           TextButton(
             onPressed: () {
               context.read<ChatProvider>().deleteChatSession(sessionId);
+              if (!context.mounted) return;
               Navigator.pop(context); // Đóng dialog sau khi xóa
             },
             child: Row(
