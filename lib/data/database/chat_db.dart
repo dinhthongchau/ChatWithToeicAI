@@ -32,6 +32,7 @@ class ChatDB {
 
     String newSessionId = DateTime.now().toIso8601String();
     await db.insert('chat_sessions', {'chat_sessions_id': newSessionId, 'user_id': userId});
+    print("Created new session: $newSessionId for user: $userId");
     return newSessionId;
   }
 
@@ -74,32 +75,20 @@ class ChatDB {
   }
 
   // Lưu phiên chat
-  static Future<void> saveChatSession(
-      int userId, String sessionId, List<String> messages) async {
+  static Future<void> saveChatSession(int userId, String sessionId, List<String> messages) async {
     final db = await DBHelper.database;
     int sessionExists = (await db.query(
       'chat_sessions',
       where: 'chat_sessions_id = ?',
       whereArgs: [sessionId],
-    ))
-            .isNotEmpty
-        ? 1
-        : 0;
+    )).isNotEmpty ? 1 : 0;
 
     if (sessionExists == 0) {
-      await db.insert('chat_sessions', {'user_id': userId});
+      await db.insert('chat_sessions', {'chat_sessions_id': sessionId, 'user_id': userId});
     }
 
-    List<Map<String, dynamic>> result = await db.query(
-      'chat_sessions',
-      where: 'user_id = ?',
-      whereArgs: [userId],
-      orderBy: 'chat_sessions_id DESC',
-      limit: 1,
-    );
-
-    int? chatSessionsId =
-        result.isNotEmpty ? result.first['chat_sessions_id'] as int? : null;
+    // No need to query again if sessionId is already provided
+    String? chatSessionsId = sessionId; // Use the provided sessionId directly
 
     for (int i = 0; i < messages.length; i += 2) {
       await db.insert('chat_messages', {
@@ -166,11 +155,11 @@ class ChatDB {
       whereArgs: [userId, sessionId],
     );
     if (session.isEmpty) return;
-    int chatSessionsId = session.first['chat_sessions_id'] as int;
 
+    // No need to cast to int, sessionId is already a String
     await db.delete('chat_messages',
-        where: 'chat_sessions_id = ?', whereArgs: [chatSessionsId]);
+        where: 'chat_sessions_id = ?', whereArgs: [sessionId]);
     await db.delete('chat_sessions',
-        where: 'chat_sessions_id = ?', whereArgs: [chatSessionsId]);
+        where: 'chat_sessions_id = ?', whereArgs: [sessionId]);
   }
 }

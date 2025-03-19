@@ -31,9 +31,8 @@ class ChatProvider with ChangeNotifier {
 
   List<String> _chatHistory = [];
   List<String> get chatHistory => _chatHistory;
-  final bool _isHistoryLoaded = false;
   Future<void> loadChatHistory() async {
-    if (_userId == null || _isHistoryLoaded) return; //prevent loading
+    if (_userId == null ) return; //prevent loading
     _chatHistory.clear(); //clear it before new loading
     _chatHistory = await ChatDB.getUserChatHistory(_userId!);
     print("Loaded chat history in loadChatHistory: $_chatHistory");
@@ -93,7 +92,8 @@ class ChatProvider with ChangeNotifier {
     }
     _currentSessionId = newSessionId;
     _messages.clear();
-    await loadChatHistory();
+    _chatHistory = await ChatDB.getUserChatHistory(_userId!); // Tải trực tiếp
+    print("New session started: $newSessionId, history: $_chatHistory");
     notifyListeners();
   }
 
