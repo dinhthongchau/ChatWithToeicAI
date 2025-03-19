@@ -33,7 +33,7 @@ class GuideScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "TOEIC AI Chatbox User Guide",
+              "TOEIC AI Chatbot User Guide",
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -49,7 +49,7 @@ class GuideScreen extends StatelessWidget {
                   color: themeProvider.textColor),
             ),
             Text(
-              "TOEIC AI Chatbox is an intelligent learning tool designed to help you improve your TOEIC skills.",
+              "TOEIC AI Chatbot is an intelligent learning tool designed to help you improve your TOEIC skills.",
               style: TextStyle(color: themeProvider.textColor),
             ),
             SizedBox(height: 10),
