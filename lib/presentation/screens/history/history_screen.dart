@@ -81,7 +81,7 @@ class BottomNavigationBar extends StatelessWidget {
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
-            color: themeProvider.chatBoxColor, // Màu theo theme
+            color: themeProvider.ChatbotColor, // Màu theo theme
             border: Border(
               top: BorderSide(
                   color: themeProvider.historyBorderColor,
@@ -166,7 +166,7 @@ class Body extends StatelessWidget {
                       padding: !isLandscape ? const EdgeInsets.symmetric(vertical: 10, horizontal: 14) :const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
                       margin: !isLandscape ?  const EdgeInsets.symmetric(vertical: 5) :  const EdgeInsets.symmetric(vertical: 0),
                       decoration: BoxDecoration(
-                        color: themeProvider.chatBoxColor,
+                        color: themeProvider.ChatbotColor,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: isSelected ? (themeProvider.isLightTheme == false ? Colors.white : Colors.black ) : themeProvider.historyBorderColor,

@@ -29,7 +29,7 @@ class ThemeProvider with ChangeNotifier{
    Color get historyBorderColor => _isLightTheme //
        ? Colors.white
        : Colors.black;
-  Color get chatBoxColor => _isLightTheme //
+  Color get ChatbotColor => _isLightTheme //
       ? Color.fromARGB(255, 240, 240, 240)
       : Color.fromARGB(255, 69, 67, 67);
   Color get userMessageColor => _isLightTheme //màu nền tin nhắn User

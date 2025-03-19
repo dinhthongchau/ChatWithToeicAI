@@ -63,9 +63,9 @@ class GuideScreen extends StatelessWidget {
             _buildFeatureItem(
                 "a. Translate Words and Provide TOEIC-Related Vocabulary",
                 themeProvider,
-                "Example: Type 'What does 'ubiquitous' mean?' and the chatbox will provide the definition, pronunciation, and example sentences."),
+                "Example: Type 'What does 'ubiquitous' mean?' and the chatbot will provide the definition, pronunciation, and example sentences."),
             _buildFeatureItem("b. Explain Grammar Rules", themeProvider,
-                "Example: Ask 'When should I use present perfect tense?' and the chatbox will provide explanations with sample sentences."),
+                "Example: Ask 'When should I use present perfect tense?' and the chatbot will provide explanations with sample sentences."),
             _buildFeatureItem(
                 "c. Synonyms and Antonyms for TOEIC Words",
                 themeProvider,
@@ -82,14 +82,14 @@ class GuideScreen extends StatelessWidget {
                 "Example: Ask 'How should I manage my time in the TOEIC test?' to receive tips for each section."),
             SizedBox(height: 10),
             Text(
-              "3. How to Use the Chatbox",
+              "3. How to Use the Chatbot",
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: themeProvider.textColor),
             ),
             Text(
-              "- Open the chatbox and enter your TOEIC-related question.\n"
+              "- Open the chatbot and enter your TOEIC-related question.\n"
               "- Receive an instant response from the system.\n"
               "- Apply the provided information to your studies.",
               style: TextStyle(color: themeProvider.textColor),

@@ -14,7 +14,7 @@ class RegisterScreen extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       backgroundColor: themeProvider.backgroundColor,
-      appBar: AppBar(title: const Text("TOEIC AI CHATBOX")),
+      appBar: AppBar(title: const Text("TOEIC AI CHATBOT")),
       body: const Body(),
     );
   }
@@ -160,7 +160,7 @@ class _BodyState extends State<Body> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                   content: Text(
-                      "Registration successful! - Welcome to TOEIC AI CHATBOX")),
+                      "Registration successful! - Welcome to TOEIC AI CHATBOT")),
             );
           } catch (e) {
             if (!mounted) return;

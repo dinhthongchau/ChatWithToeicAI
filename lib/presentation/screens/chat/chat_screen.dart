@@ -102,7 +102,7 @@ class ChatScreenPage extends StatelessWidget {
         return Scaffold(
           backgroundColor: themeProvider.backgroundColor,
           appBar: AppBar(
-            backgroundColor: themeProvider.chatBoxColor,
+            backgroundColor: themeProvider.ChatbotColor,
             leadingWidth: 120,
             leading: Row(
               mainAxisSize: MainAxisSize.min,

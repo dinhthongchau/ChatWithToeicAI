@@ -19,7 +19,7 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: themeProvider.backgroundColor,
       appBar: AppBar(
-        title: Text("TOEIC AI ChatBox",
+        title: Text("TOEIC AI Chatbot",
             style: TextStyle(color: themeProvider.textColor)),
         backgroundColor: themeProvider.backgroundColor,
         elevation: 0,
