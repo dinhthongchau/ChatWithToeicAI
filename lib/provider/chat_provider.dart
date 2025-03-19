@@ -87,15 +87,14 @@ class ChatProvider with ChangeNotifier {
   Future<void> startNewSession() async {
     if (_userId == null) return;
 
-    // Kiểm tra nếu có session chưa có tin nhắn thì sử dụng session đó
-    int? newSessionId = await ChatDB.createChatSession(_userId!);
-
-    if (newSessionId != null) {
-      _currentSessionId = newSessionId.toString();
-      _messages.clear();
-      await loadChatHistory();
-      notifyListeners();
+    String newSessionId = await ChatDB.createChatSession(_userId!);
+    if (_messages.isNotEmpty && _currentSessionId != null) {
+      await saveCurrentSession(_currentSessionId!);
     }
+    _currentSessionId = newSessionId;
+    _messages.clear();
+    await loadChatHistory();
+    notifyListeners();
   }
 
 
@@ -132,12 +131,33 @@ class ChatProvider with ChangeNotifier {
   // rename session chat
   Future<void> renameChatSession(
       String oldSessionId, String newSessionId) async {
-    if (_userId == null || oldSessionId == newSessionId) return;
-    await ChatDB.renameChatSession(_userId!, oldSessionId, newSessionId);
-    if (_currentSessionId == oldSessionId) {
-      _currentSessionId = newSessionId;
+    if (_userId == null) {
+      print("Error: User ID is null. Cannot rename chat session.");
+      return;
     }
-    notifyListeners();
+
+    if (oldSessionId == newSessionId) {
+      print("Warning: Old and new session IDs are the same. No rename needed.");
+      return;
+    }
+
+    if (newSessionId.trim().isEmpty) {
+      print("Error: New session ID cannot be empty.");
+      return;
+    }
+
+    try {
+      await ChatDB.renameChatSession(_userId!, oldSessionId, newSessionId);
+      if (_currentSessionId == oldSessionId) {
+        _currentSessionId = newSessionId;
+      }
+      await loadChatHistory();
+      notifyListeners();
+
+    }
+    catch(e){
+      print(e);
+    }
   }
 
   // Delete session chat

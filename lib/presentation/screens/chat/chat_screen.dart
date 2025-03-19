@@ -1,5 +1,7 @@
 import 'package:ct312hm01_temp/core/enum/load_status.dart';
+import 'package:ct312hm01_temp/presentation/screens/auth/login_screen.dart';
 import 'package:ct312hm01_temp/presentation/screens/history/history_screen.dart';
+import 'package:ct312hm01_temp/provider/app_auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../common_widgets/custom_loading_indicator.dart';
@@ -84,7 +86,7 @@ class ChatScreenState extends State<ChatScreen> {
             ),
             centerTitle: true,
             actions: [
-              IconButton(
+              context.read<ChatProvider>().userId != null ? IconButton(
                   icon: Icon(
                     Icons.add_circle_outline,
                     color: themeProvider.textColor,
@@ -102,7 +104,9 @@ class ChatScreenState extends State<ChatScreen> {
                       textColor: Colors.white,
                       fontSize: 16.0,
                     );
-                  }),
+                  }) : TextButton(onPressed: (){
+                    Navigator.of(context).pushNamed(LoginScreen.route);
+              }, child: Text("Login")),
             ],
           ),
           body: Stack(
@@ -260,26 +264,27 @@ class Body extends StatelessWidget {
                     hintStyle: TextStyle(
                         color: context
                             .watch<ThemeProvider>()
-                            .textColor.withAlpha((0.1 * 255).toInt())), // Màu gợi ý
+                            .textColor
+                            .withAlpha((0.1 * 255).toInt())), // Màu gợi ý
                     border: InputBorder.none,
                   ),
                 ),
               ),
               Consumer<ChatProvider>(
                 builder: (context, chatProvider, child) {
-
                   return chatProvider.loadStatus == LoadStatus.loading
-                      ? Center(child: CustomLoadingIndicator(
-                    color: Colors.red,
-                    size: 30.0,
-                  ))
+                      ? Center(
+                          child: CustomLoadingIndicator(
+                          color: Colors.red,
+                          size: 30.0,
+                        ))
                       : IconButton(
                           icon: Icon(Icons.send,
                               color: context
                                   .watch<ThemeProvider>()
                                   .textColor), // Màu icon theo theme
                           onPressed: () {
-                            if ( _inputController.text.isEmpty) {
+                            if (_inputController.text.isEmpty) {
                               // ScaffoldMessenger.of(context).showSnackBar(
                               //   customNoticeSnackbar(context,"Please ask question", true),
                               // );

@@ -161,7 +161,8 @@ class _BodyState extends State<Body> {
                 if (!mounted) return;
                 context.read<ChatProvider>().setUserId(userId,_emailController.text);
 
-
+                //call after sign in
+                context.read<ChatProvider>().startNewSession();
                 print("Login successful");
                 Navigator.of(context).pushNamed(ChatScreen.route);
 

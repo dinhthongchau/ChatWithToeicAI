@@ -1,3 +1,4 @@
+import 'package:ct312hm01_temp/presentation/screens/chat/chat_screen.dart';
 import 'package:ct312hm01_temp/services/chat_service.dart';
 import 'package:ct312hm01_temp/presentation/screens/auth/login_screen.dart';
 import 'package:ct312hm01_temp/provider/chat_provider.dart';
@@ -76,8 +77,7 @@ class MyAppState extends State<MyApp> {
             themeMode: themeProvider.isLightTheme ? ThemeMode.light : ThemeMode.dark,
             debugShowCheckedModeBanner: false,
             onGenerateRoute: mainRoute,
-            // Chuyển hướng: nếu user chưa đăng nhập -> LoginScreen
-            initialRoute: _currentUser == null ? LoginScreen.route : LoginScreen.route,
+            initialRoute: _currentUser == null ? LoginScreen.route : ChatScreen.route,
           );
         },
 
