@@ -1,7 +1,6 @@
 import 'package:ct312hm01_temp/core/enum/load_status.dart';
 import 'package:ct312hm01_temp/presentation/screens/auth/login_screen.dart';
 import 'package:ct312hm01_temp/presentation/screens/history/history_screen.dart';
-import 'package:ct312hm01_temp/provider/app_auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../common_widgets/custom_loading_indicator.dart';
