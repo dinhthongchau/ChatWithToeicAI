@@ -76,6 +76,7 @@ class BottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return Container(
@@ -104,7 +105,7 @@ class BottomNavigationBar extends StatelessWidget {
                   ),
                   SizedBox(width: 10),
                   Text(
-                    context.read<ChatProvider>().userEmail??
+                      (isLandscape ? "User" : context.read<ChatProvider>().userEmail)??
                     "Guest",
                     style: TextStyle(
                       fontSize: 16,
