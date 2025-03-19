@@ -14,33 +14,46 @@ class DBHelper {
     String path = join(await getDatabasesPath(), 'chat_app.db');
     return await openDatabase(
       path,
-      version: 1,
+      version: 2, // Increment the version from 1 to 2
       onCreate: (db, version) async {
-        await db.execute('''
-          CREATE TABLE users (
-            user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE,
-            password TEXT
-          )
-        ''');
-        await db.execute('''
-          CREATE TABLE chat_sessions (
-            chat_sessions_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-          )
-        ''');
-        await db.execute('''
-          CREATE TABLE chat_messages (
-            chat_messages_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            chat_sessions_id INTEGER,
-            user_message TEXT,
-            ai_response TEXT,
-            timestamp TEXT,
-            FOREIGN KEY(chat_sessions_id) REFERENCES chat_sessions(chat_sessions_id) ON DELETE CASCADE
-          )
-        ''');
+        await _createTables(db);
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          // Drop old tables and recreate them
+          await db.execute('DROP TABLE IF EXISTS chat_messages');
+          await db.execute('DROP TABLE IF EXISTS chat_sessions');
+          await db.execute('DROP TABLE IF EXISTS users');
+          await _createTables(db);
+        }
       },
     );
+  }
+
+  static Future<void> _createTables(Database db) async {
+    await db.execute('''
+      CREATE TABLE users (
+        user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE,
+        password TEXT
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE chat_sessions (
+        chat_sessions_id TEXT PRIMARY KEY,
+        user_id INTEGER,
+        FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE chat_messages (
+        chat_messages_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        chat_sessions_id TEXT,
+        user_message TEXT,
+        ai_response TEXT,
+        timestamp TEXT,
+        FOREIGN KEY(chat_sessions_id) REFERENCES chat_sessions(chat_sessions_id) ON DELETE CASCADE
+      )
+    ''');
   }
 }

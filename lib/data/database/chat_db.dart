@@ -6,10 +6,10 @@ import 'db_helper.dart';
 
 class ChatDB {
   // Tạo một phiên trò chuyện mới cho một user
-  static Future<int?> createChatSession(int userId) async {
+  static Future<String> createChatSession(int userId) async {
     final db = await DBHelper.database;
 
-    // Kiểm tra nếu có session chưa có tin nhắn thì không tạo mới
+    // Check for existing empty session
     List<Map<String, dynamic>> existingSessions = await db.query(
       'chat_sessions',
       where: 'user_id = ?',
@@ -19,21 +19,20 @@ class ChatDB {
     );
 
     if (existingSessions.isNotEmpty) {
-      int existingSessionId = existingSessions.first['chat_sessions_id'];
+      String existingSessionId = existingSessions.first['chat_sessions_id'] as String;
       List<Map<String, dynamic>> messages = await db.query(
         'chat_messages',
         where: 'chat_sessions_id = ?',
         whereArgs: [existingSessionId],
       );
-
-      // Nếu session chưa có tin nhắn thì trả về session cũ, không tạo mới
       if (messages.isEmpty) {
         return existingSessionId;
       }
     }
 
-    // Nếu không có session hợp lệ, tạo mới
-    return await db.insert('chat_sessions', {'user_id': userId});
+    String newSessionId = DateTime.now().toIso8601String();
+    await db.insert('chat_sessions', {'chat_sessions_id': newSessionId, 'user_id': userId});
+    return newSessionId;
   }
 
 
@@ -46,13 +45,12 @@ class ChatDB {
       whereArgs: [userId],
       orderBy: 'chat_sessions_id DESC',
     );
-
-    return result.map((e) => e['chat_sessions_id'].toString()).toList();
+    return result.map((e) => e['chat_sessions_id'] as String).toList();
   }
 
   // Thêm một đoạn tin nhắn mới vào một phiên trò chuyện
   static Future<int> addChatMessage(
-      int chatSessionsId, String userMessage, String aiResponse) async {
+      String chatSessionsId, String userMessage, String aiResponse) async {
     final db = await DBHelper.database;
     return await db.insert('chat_messages', {
       'chat_sessions_id': chatSessionsId,
@@ -64,7 +62,7 @@ class ChatDB {
 
   // Lấy danh sách tin nhắn của một phiên trò chuyện
   static Future<List<ChatMessageModel>> getChatMessages(
-      int chatSessionsId) async {
+      String chatSessionsId) async {
     final db = await DBHelper.database;
     List<Map<String, dynamic>> result = await db.query(
       'chat_messages',
@@ -135,12 +133,28 @@ class ChatDB {
   static Future<void> renameChatSession(
       int userId, String oldSessionId, String newSessionId) async {
     final db = await DBHelper.database;
-    await db.update(
-      'chat_sessions',
-      {'chat_sessions_id': newSessionId},
-      where: 'chat_sessions_id = ? AND user_id = ?',
-      whereArgs: [oldSessionId, userId],
-    );
+    try {
+      // Update chat_sessions table
+      await db.update(
+        'chat_sessions',
+        {'chat_sessions_id': newSessionId},
+        where: 'chat_sessions_id = ? AND user_id = ?',
+        whereArgs: [oldSessionId, userId],
+      );
+
+      // Update chat_messages table (fix the typo)
+      await db.update(
+        'chat_messages',
+        {'chat_sessions_id': newSessionId},
+        where: 'chat_sessions_id = ?', // Corrected from 'chat_session_id'
+        whereArgs: [oldSessionId],
+      );
+
+      print("Renamed chat session in database from '$oldSessionId' to '$newSessionId'");
+    } catch (e) {
+      print("Error renaming chat session in database: $e");
+      rethrow;
+    }
   }
 
   // Xóa phiên chat

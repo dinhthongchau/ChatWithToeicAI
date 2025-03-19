@@ -30,9 +30,8 @@ void showOptionsDialog(BuildContext context, String sessionId) {
             onPressed: () {
               final newName = renameController.text.trim();
               if (newName.isNotEmpty && newName != sessionId) {
-                context
-                    .read<ChatProvider>()
-                    .renameChatSession(sessionId, newName);
+                context  .read<ChatProvider>().renameChatSession(sessionId, newName);
+                //context  .read<ChatProvider>().renameChatSession("56", "566");
               }
               Navigator.pop(context); // Đóng dialog sau khi đổi tên
             },

@@ -1,6 +1,6 @@
 class ChatMessageModel {
   int? id;
-  int chatId;
+  String  chatId;
   String userMessage;
   String aiResponse;
   String timestamp;
