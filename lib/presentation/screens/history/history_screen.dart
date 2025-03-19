@@ -27,7 +27,7 @@ class Page extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onHorizontalDragEnd: (details) {
-        if (details.primaryVelocity! > 0) { // Right swipe detected
+        if (details.primaryVelocity! < 0) { // Right swipe detected
           Navigator.of(context).pushNamed(ChatScreen.route);
         }
       },
