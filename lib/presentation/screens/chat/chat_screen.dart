@@ -9,6 +9,8 @@ import '../../../provider/theme_provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
+import '../../common_widgets/custom_notice_snackbar.dart';
+
 class ChatScreen extends StatefulWidget {
   static const String route = "/chat";
 
@@ -284,9 +286,9 @@ class Body extends StatelessWidget {
                                   .textColor), // Màu icon theo theme
                           onPressed: () {
                             if (_inputController.text.isEmpty) {
-                              // ScaffoldMessenger.of(context).showSnackBar(
-                              //   customNoticeSnackbar(context,"Please ask question", true),
-                              // );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                customNoticeSnackbar(context,"Please ask question", true),
+                              );
                             } else {
                               sendMessage();
                             }
