@@ -156,34 +156,37 @@ class Body extends StatelessWidget {
                 final sessionId = chatHistory[index] ;
                 final isSelected = sessionId == chatProvider.currentSessionId;
                 final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-                return GestureDetector(
-                  onLongPress: () {
-                    showOptionsDialog(context, sessionId);
-                  },
-                  child: Container(
-                    padding: !isLandscape ? const EdgeInsets.symmetric(vertical: 10, horizontal: 14) :const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
-                    margin: !isLandscape ?  const EdgeInsets.symmetric(vertical: 5) :  const EdgeInsets.symmetric(vertical: 0),
-                    decoration: BoxDecoration(
-                      color: themeProvider.chatBoxColor,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: isSelected ? (themeProvider.isLightTheme == false ? Colors.white : Colors.black ) : themeProvider.historyBorderColor,
-                        width: 3.0,
+                return Center(
+                  child: GestureDetector(
+                    onLongPress: () {
+                      showOptionsDialog(context, sessionId);
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      padding: !isLandscape ? const EdgeInsets.symmetric(vertical: 10, horizontal: 14) :const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+                      margin: !isLandscape ?  const EdgeInsets.symmetric(vertical: 5) :  const EdgeInsets.symmetric(vertical: 0),
+                      decoration: BoxDecoration(
+                        color: themeProvider.chatBoxColor,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: isSelected ? (themeProvider.isLightTheme == false ? Colors.white : Colors.black ) : themeProvider.historyBorderColor,
+                          width: 3.0,
+                        ),
                       ),
-                    ),
-                    child: ListTile(
-                      title: Text(
-                        sessionId,
-                        style: TextStyle(color: themeProvider.textColor),
-                      ),
-                      onTap: () {
-                        chatProvider.loadSession(sessionId);
-                        //responsive screen
+                      child: ListTile(
+                        title: Text(
+                          sessionId,
+                          style: TextStyle(color: themeProvider.textColor),
+                        ),
+                        onTap: () {
+                          chatProvider.loadSession(sessionId);
+                          //responsive screen
 
-                        if (!isLandscape) {
-                          Navigator.pop(context);
-                        }
-                      },
+                          if (!isLandscape) {
+                            Navigator.pop(context);
+                          }
+                        },
+                      ),
                     ),
                   ),
                 );
