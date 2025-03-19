@@ -26,6 +26,9 @@ class ThemeProvider with ChangeNotifier{
 
   Color get backgroundColor => _isLightTheme ? Colors.white : Colors.black; // màu nền
   Color get textColor => _isLightTheme ? Colors.black : Colors.white; // màu chữ
+   Color get historyBorderColor => _isLightTheme //
+       ? Colors.white
+       : Colors.black;
   Color get chatBoxColor => _isLightTheme //
       ? Color.fromARGB(255, 240, 240, 240)
       : Color.fromARGB(255, 69, 67, 67);
@@ -43,7 +46,7 @@ class ThemeProvider with ChangeNotifier{
   Color get inputBorderColor => _isLightTheme //màu viền khung nhập
       ? Color.fromARGB(255, 180, 180, 180) 
       : Color.fromARGB(255, 145, 142, 142); 
-  Color get historyBorderColor => _isLightTheme //màu viền khung nhập
+  Color get historyBorderColor2 => _isLightTheme //màu viền khung nhập
       ? Color.fromARGB(255, 124, 206, 173)
       : Color.fromARGB(255, 145, 142, 142); 
 }

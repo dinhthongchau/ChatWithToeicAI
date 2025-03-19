@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../provider/chat_provider.dart';
+import '../../../provider/history_visibility_provider.dart';
 import '../setting/setting_dialog.dart';
 import '../../../provider/theme_provider.dart';
 import 'history_options_dialog.dart';
@@ -51,7 +52,15 @@ class CustomHistoryAppBar extends StatelessWidget
       title: Text("History Chat"),
       leading: IconButton(
           onPressed: () {
-            Navigator.of(context).pop();
+            final historyProvider = context.read<HistoryVisibilityProvider>();
+            final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+            if (isLandscape && historyProvider.isHistoryVisible == true) {
+              historyProvider.hideHistory(); // Toggle trong landscape
+            } else{
+              Navigator.of(context).popUntil(ModalRoute.withName(ChatScreen.route));
+              historyProvider.showHistory();
+            }
+
           },
           icon: Icon(Icons.arrow_back)),
     );
@@ -145,19 +154,20 @@ class Body extends StatelessWidget {
               itemBuilder: (context, index) {
                 final sessionId = chatHistory[index] ;
                 final isSelected = sessionId == chatProvider.currentSessionId;
+                final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
                 return GestureDetector(
                   onLongPress: () {
                     showOptionsDialog(context, sessionId);
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+                    padding: !isLandscape ? const EdgeInsets.symmetric(vertical: 10, horizontal: 14) :const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
                     margin: const EdgeInsets.symmetric(vertical: 5),
                     decoration: BoxDecoration(
                       color: themeProvider.chatBoxColor,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: isSelected ? Colors.white : themeProvider.historyBorderColor,
-                        width: 2.0,
+                        color: isSelected ? (themeProvider.isLightTheme == false ? Colors.white : Colors.black ) : themeProvider.historyBorderColor,
+                        width: 3.0,
                       ),
                     ),
                     child: ListTile(
@@ -167,7 +177,11 @@ class Body extends StatelessWidget {
                       ),
                       onTap: () {
                         chatProvider.loadSession(sessionId);
-                        Navigator.pop(context);
+                        //responsive screen
+
+                        if (!isLandscape) {
+                          Navigator.pop(context);
+                        }
                       },
                     ),
                   ),
@@ -178,7 +192,7 @@ class Body extends StatelessWidget {
         );
 
           }
-      
+
     );
   }
 }

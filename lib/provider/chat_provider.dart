@@ -19,23 +19,18 @@ class ChatProvider with ChangeNotifier {
   List<String> _messages = [];
   String? _currentSessionId;
   LoadStatus _loadStatus = LoadStatus.init;
-  // String? _userId;
   int? _userId;
   String? _userEmail;
-
-
   LoadStatus get loadStatus => _loadStatus;
   List<String> get messages => _messages;
   String? get currentSessionId => _currentSessionId;
-
   int? get userId => _userId;
   String? get userEmail => _userEmail;
   final bool _isCreatingSession = false;
   bool get isCreatingSession => _isCreatingSession;
-
-
   List<String> _chatHistory = [];
   List<String> get chatHistory => _chatHistory;
+
 
   Future<void> loadChatHistory() async {
     if (_userId == null ) return; //prevent loading

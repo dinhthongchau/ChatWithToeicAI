@@ -25,7 +25,7 @@ class LoginScreen extends StatelessWidget {
         elevation: 0,
         automaticallyImplyLeading: false,
       ),
-      body: const Body(),
+      body: SingleChildScrollView(child: const Body()),
     );
   }
 }
@@ -147,44 +147,46 @@ class _BodyState extends State<Body> {
 
   Widget _buildLoginButton(
       AppAuthProvider authProvider, ThemeProvider themeProvider) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () async {
-          try {
+    return Center(
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () async {
+            try {
 
 
-            await authProvider.loginWithEmail(_emailController.text, _passwordController.text);
-            // get by email
-            int? userId = await UserDB.getUserIdByEmail(_emailController.text);
-            if (userId != null ) {
+              await authProvider.loginWithEmail(_emailController.text, _passwordController.text);
+              // get by email
+              int? userId = await UserDB.getUserIdByEmail(_emailController.text);
+              if (userId != null ) {
+                  if (!mounted) return;
+                  context.read<ChatProvider>().setUserId(userId,_emailController.text);
+
+                  //call after sign in
+                  context.read<ChatProvider>().startNewSession();
+                  print("Login successful");
+                  Navigator.of(context).pushNamed(ChatScreen.route);
+
+              }
+
+
+            } catch (e) {
+                print("Login error: $e");
                 if (!mounted) return;
-                context.read<ChatProvider>().setUserId(userId,_emailController.text);
-
-                //call after sign in
-                context.read<ChatProvider>().startNewSession();
-                print("Login successful");
-                Navigator.of(context).pushNamed(ChatScreen.route);
-
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    customNoticeSnackbar(context, "$e", true),
+                  );
             }
-
-
-          } catch (e) {
-              print("Login error: $e");
-              if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  customNoticeSnackbar(context, "$e", true),
-                );
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: themeProvider.historyBorderColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: themeProvider.historyBorderColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 12),
           ),
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Text("Login", style: TextStyle(color: themeProvider.textColor)),
         ),
-        child: Text("Login", style: TextStyle(color: themeProvider.textColor)),
       ),
     );
   }

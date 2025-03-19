@@ -3,6 +3,7 @@ import 'package:ct312hm01_temp/presentation/screens/auth/login_screen.dart';
 import 'package:ct312hm01_temp/presentation/screens/history/history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../provider/history_visibility_provider.dart';
 import '../../common_widgets/custom_loading_indicator.dart';
 import '../../../provider/chat_provider.dart';
 import '../../../provider/theme_provider.dart';
@@ -43,6 +44,56 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   @override
+  @override
+  Widget build(BuildContext context) {
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        final isLandscape = orientation == Orientation.landscape;
+        return Consumer<HistoryVisibilityProvider>(
+          builder: (context, historyProvider, child) {
+            return isLandscape
+                ? Row(
+              children: [
+                if (historyProvider.isHistoryVisible) // Dùng trạng thái từ provider
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.2,
+                    child: ChatHistoryScreen(),
+                  ),
+                Expanded(
+                  child: ChatScreenPage(
+                    chatProvider: chatProvider,
+                    inputController: _inputController,
+                    scrollController: _scrollController,
+                  ),
+                ),
+              ],
+            )
+                : ChatScreenPage(
+              chatProvider: chatProvider,
+              inputController: _inputController,
+              scrollController: _scrollController,
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class ChatScreenPage extends StatelessWidget {
+  const ChatScreenPage({
+    super.key,
+    required this.chatProvider,
+    required TextEditingController inputController,
+    required ScrollController scrollController,
+  })  : _inputController = inputController,
+        _scrollController = scrollController;
+
+  final ChatProvider chatProvider;
+  final TextEditingController _inputController;
+  final ScrollController _scrollController;
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
@@ -57,7 +108,8 @@ class ChatScreenState extends State<ChatScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  onPressed: () => Navigator.of(context).pushNamed(ChatHistoryScreen.route),
+                  onPressed: () =>
+                      Navigator.of(context).pushNamed(ChatHistoryScreen.route),
                   icon: Icon(
                     Icons.format_list_bulleted,
                     color: themeProvider.textColor,
@@ -86,27 +138,31 @@ class ChatScreenState extends State<ChatScreen> {
             ),
             centerTitle: true,
             actions: [
-              context.read<ChatProvider>().userId != null ? IconButton(
-                  icon: Icon(
-                    Icons.add_circle_outline,
-                    color: themeProvider.textColor,
-                    size: 35,
-                  ),
-                  onPressed: () {
-                    chatProvider.startNewSession();
-                    Fluttertoast.showToast(
-                      msg: "New chat created",
-                      toastLength: Toast.LENGTH_LONG,
-                      gravity: ToastGravity.CENTER,
-                      //Flutter web không hổ trợ căn giữa cho Fluttertoast, nó sẽ hiển thị ở góc phải trên màn hình
-                      backgroundColor: Colors.black,
-                      //cũng không hổ trợ chỉnh màu nền ở web, còn chạy emulator android ios thì bình thường
-                      textColor: Colors.white,
-                      fontSize: 16.0,
-                    );
-                  }) : TextButton(onPressed: (){
-                    Navigator.of(context).pushNamed(LoginScreen.route);
-              }, child: Text("Login")),
+              context.read<ChatProvider>().userId != null
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.add_circle_outline,
+                        color: themeProvider.textColor,
+                        size: 35,
+                      ),
+                      onPressed: () {
+                        chatProvider.startNewSession();
+                        Fluttertoast.showToast(
+                          msg: "New chat created",
+                          toastLength: Toast.LENGTH_LONG,
+                          gravity: ToastGravity.CENTER,
+                          //Flutter web không hổ trợ căn giữa cho Fluttertoast, nó sẽ hiển thị ở góc phải trên màn hình
+                          backgroundColor: Colors.black,
+                          //cũng không hổ trợ chỉnh màu nền ở web, còn chạy emulator android ios thì bình thường
+                          textColor: Colors.white,
+                          fontSize: 16.0,
+                        );
+                      })
+                  : TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(LoginScreen.route);
+                      },
+                      child: Text("Login")),
             ],
           ),
           body: Stack(
@@ -286,7 +342,8 @@ class Body extends StatelessWidget {
                           onPressed: () {
                             if (_inputController.text.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                customNoticeSnackbar(context,"Please ask question", true),
+                                customNoticeSnackbar(
+                                    context, "Please ask question", true),
                               );
                             } else {
                               sendMessage();

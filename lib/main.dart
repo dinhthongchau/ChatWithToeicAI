@@ -1,4 +1,5 @@
 import 'package:ct312hm01_temp/presentation/screens/chat/chat_screen.dart';
+import 'package:ct312hm01_temp/provider/history_visibility_provider.dart';
 import 'package:ct312hm01_temp/services/chat_service.dart';
 import 'package:ct312hm01_temp/presentation/screens/auth/login_screen.dart';
 import 'package:ct312hm01_temp/provider/chat_provider.dart';
@@ -67,6 +68,8 @@ class MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (_) => AppAuthProvider (),
         ),
+        ChangeNotifierProvider(
+            create: (_) => HistoryVisibilityProvider())
 
 
       ],
