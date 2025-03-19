@@ -97,7 +97,8 @@ class _BodyState extends State<Body> {
                   style: ButtonStyle(
                     overlayColor: WidgetStateProperty.all(
                       _isHovered
-                          ? themeProvider.userMessageColor.withValues(alpha: 0.3)
+                          ? themeProvider.userMessageColor
+                              .withValues(alpha: 0.3)
                           : Colors.transparent,
                     ),
                   ),
@@ -153,29 +154,31 @@ class _BodyState extends State<Body> {
         child: ElevatedButton(
           onPressed: () async {
             try {
-
-
-              await authProvider.loginWithEmail(_emailController.text, _passwordController.text);
+              await authProvider.loginWithEmail(
+                  _emailController.text, _passwordController.text);
               // get by email
-              int? userId = await UserDB.getUserIdByEmail(_emailController.text);
-              if (userId != null ) {
-                  if (!mounted) return;
-                  context.read<ChatProvider>().setUserId(userId,_emailController.text);
-
-                  //call after sign in
-                  context.read<ChatProvider>().startNewSession();
-                  print("Login successful");
-                  Navigator.of(context).pushNamed(ChatScreen.route);
-
-              }
-
-
-            } catch (e) {
-                print("Login error: $e");
+              int? userId =
+                  await UserDB.getUserIdByEmail(_emailController.text);
+              if (userId != null) {
                 if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    customNoticeSnackbar(context, "$e", true),
-                  );
+                context
+                    .read<ChatProvider>()
+                    .setUserId(userId, _emailController.text);
+
+                //call after sign in
+                context.read<ChatProvider>().startNewSession();
+                print("Login successful");
+                Navigator.of(context).pushNamed(
+                  ChatScreen.route,
+                  arguments: userId,
+                );
+              }
+            } catch (e) {
+              print("Login error: $e");
+              if (!mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                customNoticeSnackbar(context, "$e", true),
+              );
             }
           },
           style: ElevatedButton.styleFrom(
@@ -185,7 +188,8 @@ class _BodyState extends State<Body> {
             ),
             padding: const EdgeInsets.symmetric(vertical: 12),
           ),
-          child: Text("Login", style: TextStyle(color: themeProvider.textColor)),
+          child:
+              Text("Login", style: TextStyle(color: themeProvider.textColor)),
         ),
       ),
     );

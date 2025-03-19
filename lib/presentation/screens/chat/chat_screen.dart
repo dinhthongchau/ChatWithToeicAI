@@ -14,8 +14,9 @@ import '../../common_widgets/custom_notice_snackbar.dart';
 
 class ChatScreen extends StatefulWidget {
   static const String route = "/chat";
+  final int? userId;
 
-  const ChatScreen({super.key});
+  const ChatScreen({super.key,  this.userId});
 
   @override
   ChatScreenState createState() => ChatScreenState();
@@ -31,6 +32,10 @@ class ChatScreenState extends State<ChatScreen> {
     super.initState();
     chatProvider = context.read<ChatProvider>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.userId != null && chatProvider.userId != widget.userId) {
+        chatProvider.setUserId(widget.userId!, ""); // Cập nhật userId
+      }
+
       chatProvider.initScroll(_scrollController);
       chatProvider.loadMessages();
     });
