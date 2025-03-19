@@ -179,7 +179,7 @@ class _BodyState extends State<Body> {
             }
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: themeProvider.historyBorderColor,
+            backgroundColor: themeProvider.loginButtonBorderColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),

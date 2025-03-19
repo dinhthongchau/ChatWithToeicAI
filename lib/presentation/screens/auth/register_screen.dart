@@ -114,21 +114,30 @@ class _BodyState extends State<Body> {
 
   Widget _buildTextField(TextEditingController controller,
       ThemeProvider themeProvider, bool obscureText) {
-    return TextField(
-      controller: controller,
-      obscureText: obscureText,
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: themeProvider.inputBoxColor,
-        border: OutlineInputBorder(
-          borderSide: BorderSide(color: themeProvider.inputBorderColor),
-          borderRadius: BorderRadius.circular(12),
+    return TextFormField(
+        controller: controller,
+        obscureText: obscureText,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: themeProvider.inputBoxColor,
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: themeProvider.inputBorderColor),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      ),
-      style: TextStyle(color: themeProvider.textColor, fontSize: 16),
-    );
+        style: TextStyle(color: themeProvider.textColor, fontSize: 16),
+        validator: (value) {
+          if (controller == _emailController) {
+            if (value == null || value.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Enter real email!")),
+              );
+            }
+          }
+          return null;
+        });
   }
 
   Widget _buildRegisterButton(
@@ -146,21 +155,22 @@ class _BodyState extends State<Body> {
           try {
             await authProvider.signUpWithEmail(_emailController.text,
                 _passwordController.text, _confirmPasswordController.text);
-              if (!mounted) return;
-              Navigator.of(context).pushNamed(LoginScreen.route);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Registration successful! - Welcome to TOEIC AI CHATBOX")),
-              );
-
+            if (!mounted) return;
+            Navigator.of(context).pushNamed(LoginScreen.route);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text(
+                      "Registration successful! - Welcome to TOEIC AI CHATBOX")),
+            );
           } catch (e) {
             if (!mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("$e")),
-              );
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("$e")),
+            );
           }
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: themeProvider.historyBorderColor,
+          backgroundColor: themeProvider.registerButtonBorderColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),

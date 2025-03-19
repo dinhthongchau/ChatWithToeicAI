@@ -45,15 +45,16 @@ class Page extends StatelessWidget {
 class CustomHistoryAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   const CustomHistoryAppBar({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
     return AppBar(
-      title: Text("History Chat"),
+      title: !isLandscape ? Text("History Chat") : Text("His"),
       leading: IconButton(
           onPressed: () {
             final historyProvider = context.read<HistoryVisibilityProvider>();
-            final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+            
             if (isLandscape && historyProvider.isHistoryVisible == true) {
               historyProvider.hideHistory(); // Toggle trong landscape
             } else{
@@ -161,7 +162,7 @@ class Body extends StatelessWidget {
                   },
                   child: Container(
                     padding: !isLandscape ? const EdgeInsets.symmetric(vertical: 10, horizontal: 14) :const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
-                    margin: const EdgeInsets.symmetric(vertical: 5),
+                    margin: !isLandscape ?  const EdgeInsets.symmetric(vertical: 5) :  const EdgeInsets.symmetric(vertical: 0),
                     decoration: BoxDecoration(
                       color: themeProvider.chatBoxColor,
                       borderRadius: BorderRadius.circular(16),

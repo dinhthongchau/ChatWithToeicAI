@@ -1,11 +1,13 @@
 // lưu trữ dữ liệu
 
 // import 'package:sqflite/sqflite.dart';
+import 'package:intl/intl.dart';
+
 import '../models/chat_message_model.dart';
 import 'db_helper.dart';
 
 class ChatDB {
-  // Tạo một phiên trò chuyện mới cho một user
+
   static Future<String> createChatSession(int userId) async {
     final db = await DBHelper.database;
 
@@ -29,15 +31,16 @@ class ChatDB {
         return existingSessionId;
       }
     }
-
-    String newSessionId = DateTime.now().toIso8601String();
+    //format hi
+    DateTime now = DateTime.now();
+    String newSessionId = DateFormat('HH\'h\'mm\'m\'ss\'s\' dd/MM/yyyy').format(now);
     await db.insert('chat_sessions', {'chat_sessions_id': newSessionId, 'user_id': userId});
     print("Created new session: $newSessionId for user: $userId");
     return newSessionId;
   }
 
 
-  // Lấy danh sách các phiên trò chuyện của một user
+
   static Future<List<String>> getUserChatHistory(int userId) async {
     final db = await DBHelper.database;
     List<Map<String, dynamic>> result = await db.query(
@@ -74,7 +77,6 @@ class ChatDB {
     return result.map((e) => ChatMessageModel.fromMap(e)).toList();
   }
 
-  // Lưu phiên chat
   static Future<void> saveChatSession(int userId, String sessionId, List<String> messages) async {
     final db = await DBHelper.database;
     int sessionExists = (await db.query(
