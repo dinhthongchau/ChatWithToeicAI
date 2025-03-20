@@ -54,7 +54,7 @@ class CustomHistoryAppBar extends StatelessWidget
       leading: IconButton(
           onPressed: () {
             final historyProvider = context.read<HistoryVisibilityProvider>();
-            
+
             if (isLandscape && historyProvider.isHistoryVisible == true) {
               historyProvider.hideHistory(); // Toggle trong landscape
             } else{
@@ -79,6 +79,7 @@ class BottomNavigationBar extends StatelessWidget {
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
+        final chatProvider = context.read<ChatProvider>();
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
@@ -105,8 +106,11 @@ class BottomNavigationBar extends StatelessWidget {
                   ),
                   SizedBox(width: 10),
                   Text(
-                      (isLandscape ? "User" : context.read<ChatProvider>().userEmail)??
-                    "Guest",
+                    chatProvider.userId == -1
+                        ? "Guest"
+                        : (isLandscape
+                            ? "User"
+                            : chatProvider.userEmail ?? "Guest"),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -137,67 +141,63 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Consumer2<ChatProvider, ThemeProvider>(
-          builder: (context, chatProvider, themeProvider, child) {
-
-        final chatHistory = chatProvider.getChatHistory();
-        print("Chat history data: $chatHistory");
-
-        return Consumer<ChatProvider>(
-          builder: (context, chatProvider, child) {
-            final chatHistory = chatProvider.chatHistory; // Dùng danh sách có sẵn, không gọi hàm mới
-
-            if (chatHistory.isEmpty) {
-              return const Center(child: Text("No chat history available."));
-            }
-
-            return ListView.builder(
-              itemCount: chatHistory.length,
-              itemBuilder: (context, index) {
-                final sessionId = chatHistory[index] ;
-                final isSelected = sessionId == chatProvider.currentSessionId;
-                final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-                return Center(
-                  child: GestureDetector(
-                    onLongPress: () {
-                      showOptionsDialog(context, sessionId);
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      padding: !isLandscape ? const EdgeInsets.symmetric(vertical: 10, horizontal: 14) :const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
-                      margin: !isLandscape ?  const EdgeInsets.symmetric(vertical: 5) :  const EdgeInsets.symmetric(vertical: 0),
-                      decoration: BoxDecoration(
-                        color: themeProvider.ChatbotColor,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: isSelected ? (themeProvider.isLightTheme == false ? Colors.white : Colors.black ) : themeProvider.historyBorderColor,
-                          width: 3.0,
-                        ),
-                      ),
-                      child: ListTile(
-                        title: Text(
-                          sessionId,
-                          style: TextStyle(color: themeProvider.textColor),
-                        ),
-                        onTap: () {
-                          chatProvider.loadSession(sessionId);
-                          //responsive screen
-
-                          if (!isLandscape) {
-                            Navigator.pop(context);
-                          }
-                        },
-                      ),
+    return Consumer2<ChatProvider, ThemeProvider>(
+      builder: (context, chatProvider, themeProvider, child) {
+        final chatHistory = chatProvider.chatHistory;
+        print("Chat history for userId ${chatProvider.userId}: $chatHistory");
+        if (chatHistory.isEmpty) {
+          return const Center(child: Text("No chat history available."));
+        }
+        return ListView.builder(
+          itemCount: chatHistory.length,
+          itemBuilder: (context, index) {
+            final sessionId = chatHistory[index];
+            final isSelected = sessionId == chatProvider.currentSessionId;
+            final isLandscape =
+                MediaQuery.of(context).orientation == Orientation.landscape;
+            return Center(
+              child: GestureDetector(
+                onLongPress: () {
+                  showOptionsDialog(context, sessionId);
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  padding: !isLandscape
+                      ? const EdgeInsets.symmetric(vertical: 10, horizontal: 14)
+                      : const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+                  margin: !isLandscape
+                      ? const EdgeInsets.symmetric(vertical: 5)
+                      : const EdgeInsets.symmetric(vertical: 0),
+                  decoration: BoxDecoration(
+                    color: themeProvider.ChatbotColor,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isSelected
+                          ? (themeProvider.isLightTheme == false
+                              ? Colors.white
+                              : Colors.black)
+                          : themeProvider.historyBorderColor,
+                      width: 3.0,
                     ),
                   ),
-                );
-              },
+                  child: ListTile(
+                    title: Text(
+                      sessionId,
+                      style: TextStyle(color: themeProvider.textColor),
+                    ),
+                    onTap: () {
+                      chatProvider.loadSession(sessionId);
+                      if (!isLandscape) {
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
+                ),
+              ),
             );
           },
         );
-
-          }
-
+      },
     );
   }
 }

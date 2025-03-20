@@ -33,7 +33,9 @@ class ChatScreenState extends State<ChatScreen> {
     chatProvider = context.read<ChatProvider>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.userId != null && chatProvider.userId != widget.userId) {
-        chatProvider.setUserId(widget.userId!, ""); // Cập nhật userId
+        chatProvider.setUserId(widget.userId!, ""); // User thường
+      } else if (widget.userId == null && chatProvider.userId != -1) {
+        chatProvider.setUserId(-1, null); // Guest user
       }
 
       chatProvider.initScroll(_scrollController);
@@ -143,7 +145,7 @@ class ChatScreenPage extends StatelessWidget {
             ),
             centerTitle: true,
             actions: [
-              context.read<ChatProvider>().userId != null
+              context.read<ChatProvider>().userId != -1
                   ? IconButton(
                       icon: Icon(
                         Icons.add_circle_outline,

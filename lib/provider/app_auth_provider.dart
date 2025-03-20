@@ -59,7 +59,9 @@ class AppAuthProvider extends ChangeNotifier {
 
 
   Future<void> signOut() async {
+    print("Signing out, currentUser before: $_currentUser"); //-> testing
     _currentUser = null;
+    print("Signing out, currentUser after: $_currentUser");
     notifyListeners();
   }
 }

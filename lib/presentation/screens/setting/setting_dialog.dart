@@ -90,14 +90,20 @@ class SignOutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chatProvider = context.read<ChatProvider>();
-    final isLoggedIn = chatProvider.userId != null; 
-
+    final authProvider = context.read<AppAuthProvider>();
+    final isLoggedIn = chatProvider.userId != -1; // Guest user có userId = -1
+    
     return TextButton(
-      onPressed: () {
+      onPressed: () async {
         if (isLoggedIn) {
           // If user signed in => sign out
           context.read<ChatProvider>().resetChat();
           context.read<AppAuthProvider>().signOut();
+          
+          chatProvider.resetChat(); // Reset ChatProvider
+          chatProvider.setUserId(-1, ""); // Đặt userId về null -> Reset AppAuthProvider
+
+          await authProvider.signOut();
           Navigator.of(context).pushNamed(LoginScreen.route);
         } else {
           // If here is guest user, go to the login screen

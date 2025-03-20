@@ -19,12 +19,12 @@ class ChatProvider with ChangeNotifier {
   List<String> _messages = [];
   String? _currentSessionId;
   LoadStatus _loadStatus = LoadStatus.init;
-  int? _userId;
+  int _userId = -1; // Giá trị mặc định là -1 (guest user)
   String? _userEmail;
   LoadStatus get loadStatus => _loadStatus;
   List<String> get messages => _messages;
   String? get currentSessionId => _currentSessionId;
-  int? get userId => _userId;
+  int get userId => _userId; 
   String? get userEmail => _userEmail;
   final bool _isCreatingSession = false;
   bool get isCreatingSession => _isCreatingSession;
@@ -33,44 +33,44 @@ class ChatProvider with ChangeNotifier {
 
 
   Future<void> loadChatHistory() async {
-    if (_userId == null ) return; //prevent loading
-    _chatHistory.clear(); //clear it before new loading
-    _chatHistory = await ChatDB.getUserChatHistory(_userId!);
-    print("Loaded chat history in loadChatHistory: $_chatHistory");
+    if (_userId == -1) return; // Guest user không có lịch sử
+    _chatHistory.clear();
+    _chatHistory = await ChatDB.getUserChatHistory(_userId);
+    print("Loaded chat history: $_chatHistory");
     notifyListeners();
   }
 
 
   Future<List<String>> getChatHistory() async {
-    if (_userId == null) return [];
-    List<String> newHistory = await ChatDB.getUserChatHistory(_userId!);
-    return newHistory;
+    if (_userId == -1) return []; // Guest user trả về danh sách rỗng
+    return await ChatDB.getUserChatHistory(_userId);
   }
 
 
-  void setUserId(int userId, String userEmail) {
+  void setUserId(int userId, String? userEmail) {
     _userId = userId;
     _userEmail = userEmail;
     _chatHistory.clear();
+    _messages.clear(); // Làm sạch tin nhắn khi thay đổi user
+    _currentSessionId = null; // Đặt lại session
     print("User ID set: $_userId");
     notifyListeners();
   }
 
   // Save chat history for each user
   Future<void> saveCurrentSession(String sessionId) async {
-    if (_userId == null) return;
+    if (_userId == -1) return; // Không lưu cho guest user
     try {
-      await ChatDB.saveChatSession(_userId!, sessionId, _messages);
+      await ChatDB.saveChatSession(_userId, sessionId, _messages);
       notifyListeners();
-    }
-   catch(e){
+    } catch (e) {
       print(e);
-   }
+    }
   }
 
   // Load chat history by sessionId
   Future<void> loadSession(String sessionId) async {
-    if (_userId == null) return;
+    if (_userId == -1) return;
 
     if (_messages.isNotEmpty && _currentSessionId != null) {
       saveCurrentSession(_currentSessionId!);
@@ -80,16 +80,22 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> startNewSession() async {
-    if (_userId == null) return;
 
-    String newSessionId = await ChatDB.createChatSession(_userId!);
+  Future<void> startNewSession() async {
+    if (_userId == -1) {
+      // Guest user: chỉ xóa tin nhắn, không tạo session trong DB
+      _messages.clear();
+      _currentSessionId = null;
+      notifyListeners();
+      return;
+    }
+    String newSessionId = await ChatDB.createChatSession(_userId);
     if (_messages.isNotEmpty && _currentSessionId != null) {
       await saveCurrentSession(_currentSessionId!);
     }
     _currentSessionId = newSessionId;
     _messages.clear();
-    _chatHistory = await ChatDB.getUserChatHistory(_userId!); // Tải trực tiếp
+    _chatHistory = await ChatDB.getUserChatHistory(_userId); // Tải trực tiếp
     print("New session started: $newSessionId, history: $_chatHistory");
     notifyListeners();
   }
@@ -97,8 +103,23 @@ class ChatProvider with ChangeNotifier {
 
   // Send message and call API to get response
   Future<void> addMessage(String message) async {
-    if (_currentSessionId == null) {
-      startNewSession();
+    if (_currentSessionId == null && _userId != -1) {
+      startNewSession(); // Chỉ tạo session nếu không phải guest
+    } else if (_userId == -1) {
+      _messages.add(message); // Guest user: thêm tin nhắn mà không lưu
+      notifyListeners();
+      _loadStatus = LoadStatus.loading;
+      try {
+        final response = await _chatModel.generateResponse(message);
+        if (response != null) {
+          _messages.add(response);
+          notifyListeners();
+        }
+        _loadStatus = LoadStatus.done;
+      } catch (e) {
+        _loadStatus = LoadStatus.error;
+      }
+      return;
     }
     _messages.add(message);
     notifyListeners();

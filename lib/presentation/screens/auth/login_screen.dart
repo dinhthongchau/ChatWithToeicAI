@@ -82,6 +82,14 @@ class _BodyState extends State<Body> {
             Center(
               child: TextButton(
                   onPressed: () {
+                    final chatProvider = context.read<ChatProvider>();
+                    final authProvider = context.read<AppAuthProvider>();
+
+                    authProvider.signOut(); // Đảm bảo _currentUser = null
+                    chatProvider.setUserId(
+                        -1, null); // Guest user với userId = -1
+                    chatProvider.resetChat(); // Xóa tin nhắn cũ => khi đăng nhập sẽ luôn là một đoạn chat mới, giống các chat bot khác
+
                     Navigator.of(context).pushNamed(ChatScreen.route);
                   },
                   child: Text("Login as guest")),
