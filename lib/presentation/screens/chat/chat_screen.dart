@@ -61,7 +61,7 @@ class ChatScreenState extends State<ChatScreen> {
             return isLandscape
                 ? Row(
               children: [
-                if (historyProvider.isHistoryVisible) // Dùng trạng thái từ provider
+                if (historyProvider.isHistoryVisible)
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.2,
                     child: ChatHistoryScreen(),

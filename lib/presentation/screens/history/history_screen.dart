@@ -50,7 +50,7 @@ class CustomHistoryAppBar extends StatelessWidget
   Widget build(BuildContext context) {
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
     return AppBar(
-      title: !isLandscape ? Text("History Chat") : Text("His"),
+      title: !isLandscape ? Text("History Chat") : Text("List",),
       leading: IconButton(
           onPressed: () {
             final historyProvider = context.read<HistoryVisibilityProvider>();
@@ -162,12 +162,8 @@ class Body extends StatelessWidget {
                 },
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.9,
-                  padding: !isLandscape
-                      ? const EdgeInsets.symmetric(vertical: 10, horizontal: 14)
-                      : const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
-                  margin: !isLandscape
-                      ? const EdgeInsets.symmetric(vertical: 5)
-                      : const EdgeInsets.symmetric(vertical: 0),
+                  padding: EdgeInsets.all(4),
+                  margin: EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     color: themeProvider.ChatbotColor,
                     borderRadius: BorderRadius.circular(16),
