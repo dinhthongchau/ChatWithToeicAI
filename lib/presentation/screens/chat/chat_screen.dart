@@ -328,7 +328,7 @@ class Body extends StatelessWidget {
                         color: context
                             .watch<ThemeProvider>()
                             .textColor
-                            .withAlpha((0.1 * 255).toInt())), // Màu gợi ý
+                            .withAlpha((0.6 * 255).toInt())), // Màu gợi ý
                     border: InputBorder.none,
                   ),
                 ),

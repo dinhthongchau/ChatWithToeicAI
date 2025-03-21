@@ -39,4 +39,6 @@ flutter:
     - lib/dotenv
     - assets/avatar/logo.png
     - assets/chat_app.db
+    - assets/image/background.png
+    - assets/image/background2.png
 

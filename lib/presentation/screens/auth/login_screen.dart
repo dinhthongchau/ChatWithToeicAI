@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../../../data/database/user_db.dart';
 import '../../common_widgets/custom_notice_snackbar.dart';
 import '../chat/chat_screen.dart';
-import '../../../provider/theme_provider.dart';
 
 class LoginScreen extends StatelessWidget {
   static const String route = "/login";
@@ -15,17 +14,32 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
-      backgroundColor: themeProvider.backgroundColor,
-      appBar: AppBar(
-        title: Text("TOEIC AI Chatbot",
-            style: TextStyle(color: themeProvider.textColor)),
-        backgroundColor: themeProvider.backgroundColor,
-        elevation: 0,
-        automaticallyImplyLeading: false,
+      body: Stack(
+        children: [
+          // Background Image
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/image/background.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          // Semi-transparent Overlay for Readability
+          Container(
+            color: Colors.black.withOpacity(0.5),
+            child: const SizedBox.expand(),
+          ),
+          // Login Form
+          SingleChildScrollView(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: const Body(),
+            ),
+          ),
+        ],
       ),
-      body: SingleChildScrollView(child: const Body()),
     );
   }
 }
@@ -40,164 +54,271 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
   bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailFocusNode.addListener(() {
+      print("Email FocusNode changed: hasFocus=${_emailFocusNode.hasFocus}");
+    });
+    _passwordFocusNode.addListener(() {
+      print(
+          "Password FocusNode changed: hasFocus=${_passwordFocusNode.hasFocus}");
+    });
+  }
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final authProvider = context.read<AppAuthProvider>();
-    final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Text(
-                "Login",
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: themeProvider.textColor),
+      padding: const EdgeInsets.symmetric(horizontal: 32.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Icon and Title
+          const Icon(
+            Icons.chat_bubble_outline,
+            size: 80,
+            color: Colors.white,
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            "TOEIC AI Chatbot",
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              shadows: [
+                Shadow(
+                  color: Colors.black54,
+                  offset: Offset(2, 2),
+                  blurRadius: 4,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32),
+          // Login Title
+          const Text(
+            "LOGIN",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              shadows: [
+                Shadow(
+                  color: Colors.black54,
+                  offset: Offset(2, 2),
+                  blurRadius: 4,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32),
+          // Email Field
+          _buildTextField(
+            controller: _emailController,
+            focusNode: _emailFocusNode,
+            obscureText: false,
+            label: "EMAIL",
+            icon: Icons.email_outlined,
+            keyboardType: TextInputType.visiblePassword,
+            onTap: () {
+              print("Email field tapped!");
+              FocusScope.of(context).requestFocus(_emailFocusNode);
+              if (_emailFocusNode.hasFocus) {
+                print("Email field has focus, ensuring keyboard is visible");
+              }
+            },
+          ),
+          const SizedBox(height: 16),
+          // Password Field
+          _buildTextField(
+            controller: _passwordController,
+            focusNode: _passwordFocusNode,
+            obscureText: true,
+            label: "PASSWORD",
+            icon: Icons.lock_outline,
+            keyboardType: TextInputType.visiblePassword,
+            onTap: () {
+              print("Password field tapped!");
+              FocusScope.of(context).requestFocus(_passwordFocusNode);
+              if (_passwordFocusNode.hasFocus) {
+                print("Password field has focus, ensuring keyboard is visible");
+              }
+            },
+          ),
+          const SizedBox(height: 32),
+          // Login Button
+          _buildLoginButton(authProvider),
+          const SizedBox(height: 16),
+          // Login as Guest
+          TextButton(
+            onPressed: () {
+              final chatProvider = context.read<ChatProvider>();
+              final authProvider = context.read<AppAuthProvider>();
+
+              authProvider.signOut();
+              chatProvider.setUserId(-1, null);
+              chatProvider.resetChat();
+
+              Navigator.of(context).pushNamed(ChatScreen.route);
+            },
+            child: const Text(
+              "Login as guest",
+              style: TextStyle(
+                color: Colors
+                    .white70,
+                fontSize: 16,
+                shadows: [
+                  Shadow(
+                    color: Colors.black54,
+                    offset: Offset(1, 1),
+                    blurRadius: 3,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 20),
-            _buildLabel("Email", themeProvider),
-            _buildTextField(_emailController, themeProvider, false),
-            const SizedBox(height: 12),
-            _buildLabel("Password", themeProvider),
-            _buildTextField(_passwordController, themeProvider, true),
-            const SizedBox(height: 20),
-            _buildLoginButton(authProvider, themeProvider),
-            const SizedBox(height: 12),
-            Center(
-              child: TextButton(
-                  onPressed: () {
-                    final chatProvider = context.read<ChatProvider>();
-                    final authProvider = context.read<AppAuthProvider>();
-
-                    authProvider.signOut(); // Đảm bảo _currentUser = null
-                    chatProvider.setUserId(
-                        -1, null); // Guest user với userId = -1
-                    chatProvider.resetChat(); // Xóa tin nhắn cũ => khi đăng nhập sẽ luôn là một đoạn chat mới, giống các chat bot khác
-
-                    Navigator.of(context).pushNamed(ChatScreen.route);
-                  },
-                  child: Text("Login as guest")),
-            ),
-            Center(
-              child: MouseRegion(
-                onEnter: (_) => setState(() => _isHovered = true),
-                onExit: (_) => setState(() => _isHovered = false),
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(RegisterScreen.route);
-                  },
-                  style: ButtonStyle(
-                    overlayColor: WidgetStateProperty.all(
-                      _isHovered
-                          ? themeProvider.userMessageColor
-                              .withValues(alpha: 0.3)
-                          : Colors.transparent,
+          ),
+          // Register Link
+          MouseRegion(
+            onEnter: (_) => setState(() => _isHovered = true),
+            onExit: (_) => setState(() => _isHovered = false),
+            child: TextButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(RegisterScreen.route);
+              },
+              style: ButtonStyle(
+                overlayColor: WidgetStateProperty.all(
+                  _isHovered
+                      ? const Color(0xFF4FC3F7)
+                          .withOpacity(0.3) // userMessageColor
+                      : Colors.transparent,
+                ),
+              ),
+              child: Text(
+                "Don't have an account? Register",
+                style: TextStyle(
+                  color: _isHovered
+                      ? const Color(0xFF4FC3F7) // userMessageColor
+                      : Colors.white, // textColor
+                  fontWeight: _isHovered ? FontWeight.bold : FontWeight.normal,
+                  fontSize: 16,
+                  shadows: const [
+                    Shadow(
+                      color: Colors.black54,
+                      offset: Offset(1, 1),
+                      blurRadius: 3,
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        "Don't have an account? Register",
-                        style: TextStyle(
-                          color: _isHovered
-                              ? themeProvider.userMessageColor
-                              : themeProvider.textColor,
-                          fontWeight:
-                              _isHovered ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildLabel(String text, ThemeProvider themeProvider) {
-    return Text(text, style: TextStyle(color: themeProvider.textColor));
-  }
-
-  Widget _buildTextField(TextEditingController controller,
-      ThemeProvider themeProvider, bool obscureText) {
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required FocusNode focusNode,
+    required bool obscureText,
+    required String label,
+    required IconData icon,
+    required TextInputType keyboardType,
+    required VoidCallback? onTap,
+  }) {
     return TextField(
       controller: controller,
+      focusNode: focusNode,
       obscureText: obscureText,
+      keyboardType: keyboardType,
+      onTap: onTap,
       decoration: InputDecoration(
-        filled: true,
-        fillColor: themeProvider.inputBoxColor,
-        border: OutlineInputBorder(
-          borderSide: BorderSide(color: themeProvider.inputBorderColor),
-          borderRadius: BorderRadius.circular(10),
+        prefixIcon: Icon(icon, color: Colors.white70), // textColor
+        labelText: label,
+        labelStyle:
+            const TextStyle(color: Colors.white70), // textColor
+        filled: false,
+        border:  OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF4FC3F7)), // inputBorderColor
+          borderRadius: BorderRadius.circular(30),
+        ),
+        enabledBorder:  OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF4FC3F7)), // inputBorderColor
+          borderRadius: BorderRadius.circular(30),
+        ),
+        focusedBorder:  OutlineInputBorder(
+          borderSide: BorderSide(
+              color: Color(0xFF4FC3F7), width: 2), // inputBorderColor
+          borderRadius: BorderRadius.circular(30),
         ),
       ),
-      style: TextStyle(color: themeProvider.textColor),
+      style: const TextStyle(color: Colors.white), // textColor
+      onTapOutside: (event) {
+        focusNode.unfocus();
+      },
     );
   }
 
-  Widget _buildLoginButton(
-      AppAuthProvider authProvider, ThemeProvider themeProvider) {
-    return Center(
-      child: SizedBox(
-        width: double.infinity,
-        child: ElevatedButton(
-          onPressed: () async {
-            try {
-              await authProvider.loginWithEmail(
-                  _emailController.text, _passwordController.text);
-              // get by email
-              int? userId =
-                  await UserDB.getUserIdByEmail(_emailController.text);
-              if (userId != null) {
-                if (!mounted) return;
-                context
-                    .read<ChatProvider>()
-                    .setUserId(userId, _emailController.text);
-
-                //call after sign in
-                context.read<ChatProvider>().startNewSession();
-                print("Login successful");
-                Navigator.of(context).pushNamed(
-                  ChatScreen.route,
-                  arguments: userId,
-                );
-              }
-            } catch (e) {
-              print("Login error: $e");
+  Widget _buildLoginButton(AppAuthProvider authProvider) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () async {
+          try {
+            await authProvider.loginWithEmail(
+                _emailController.text, _passwordController.text);
+            int? userId = await UserDB.getUserIdByEmail(_emailController.text);
+            if (userId != null) {
               if (!mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                customNoticeSnackbar(context, "$e", true),
+              context
+                  .read<ChatProvider>()
+                  .setUserId(userId, _emailController.text);
+              context.read<ChatProvider>().startNewSession();
+              print("Login successful");
+              Navigator.of(context).pushNamed(
+                ChatScreen.route,
+                arguments: userId,
               );
             }
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: themeProvider.loginButtonBorderColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 12),
+          } catch (e) {
+            print("Login error: $e");
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              customNoticeSnackbar(context, "$e", true),
+            );
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF4FC3F7),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
           ),
-          child:
-              Text("Login", style: TextStyle(color: themeProvider.textColor)),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          elevation: 5,
+        ),
+        child: const Text(
+          "LOGIN",
+          style: TextStyle(
+            color: Colors.white, // textColor
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
