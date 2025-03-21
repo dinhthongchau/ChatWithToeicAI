@@ -22,6 +22,8 @@ dependencies:
   path_provider: ^2.1.1
   get: ^4.7.2
   intl: ^0.18.0
+  lottie:
+  animated_splash_screen:
 
 
 
@@ -41,4 +43,5 @@ flutter:
     - assets/chat_app.db
     - assets/image/background.png
     - assets/image/background2.png
+    - assets/animation_splash_screen.json
 

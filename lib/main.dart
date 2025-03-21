@@ -4,6 +4,7 @@ import 'package:ct312hm01_temp/services/chat_service.dart';
 import 'package:ct312hm01_temp/presentation/screens/auth/login_screen.dart';
 import 'package:ct312hm01_temp/provider/chat_provider.dart';
 import 'package:ct312hm01_temp/provider/theme_provider.dart';
+import 'package:ct312hm01_temp/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -46,8 +47,6 @@ class MyAppState extends State<MyApp> {
   }
 
   Future<void> _loadCurrentUser() async {
-    // Giả sử bạn có một cơ chế lưu user đăng nhập gần nhất (có thể dùng SharedPreferences)
-    // Ở đây tôi để tạm null -> Màn hình Login sẽ hiển thị
     setState(() {
       _currentUser = null;
     });
@@ -84,7 +83,8 @@ class MyAppState extends State<MyApp> {
             getPages: routes,
             defaultTransition: Transition.zoom,
             transitionDuration: Duration(milliseconds: 300),
-            initialRoute: _currentUser == null ? LoginScreen.route : ChatScreen.route,
+            home: AnimatedSplashScreenWidget(currentUser: _currentUser),
+            //initialRoute: _currentUser == null ? LoginScreen.route : ChatScreen.route,
           );
         },
 
