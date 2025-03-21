@@ -53,8 +53,7 @@ class ChatDB {
   }
 
   // Thêm một đoạn tin nhắn mới vào một phiên trò chuyện
-  static Future<int> addChatMessage(
-      String chatSessionsId, String userMessage, String aiResponse) async {
+  static Future<int> addChatMessage(String chatSessionsId, String userMessage, String aiResponse) async {
     final db = await DBHelper.database;
     return await db.insert('chat_messages', {
       'chat_sessions_id': chatSessionsId,

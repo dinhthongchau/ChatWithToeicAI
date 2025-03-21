@@ -71,10 +71,6 @@ class ChatProvider with ChangeNotifier {
   // Load chat history by sessionId
   Future<void> loadSession(String sessionId) async {
     if (_userId == -1) return;
-
-    if (_messages.isNotEmpty && _currentSessionId != null) {
-      saveCurrentSession(_currentSessionId!);
-    }
     _currentSessionId = sessionId;
     _messages = await ChatDB.loadChatMessages(_userId!, sessionId);
     notifyListeners();
@@ -83,19 +79,15 @@ class ChatProvider with ChangeNotifier {
 
   Future<void> startNewSession() async {
     if (_userId == -1) {
-      // Guest user: chỉ xóa tin nhắn, không tạo session trong DB
       _messages.clear();
       _currentSessionId = null;
       notifyListeners();
       return;
     }
     String newSessionId = await ChatDB.createChatSession(_userId);
-    if (_messages.isNotEmpty && _currentSessionId != null) {
-      await saveCurrentSession(_currentSessionId!);
-    }
     _currentSessionId = newSessionId;
     _messages.clear();
-    _chatHistory = await ChatDB.getUserChatHistory(_userId); // Tải trực tiếp
+    _chatHistory = await ChatDB.getUserChatHistory(_userId);
     print("New session started: $newSessionId, history: $_chatHistory");
     notifyListeners();
   }
@@ -104,9 +96,9 @@ class ChatProvider with ChangeNotifier {
   // Send message and call API to get response
   Future<void> addMessage(String message) async {
     if (_currentSessionId == null && _userId != -1) {
-      startNewSession(); // Chỉ tạo session nếu không phải guest
+      await startNewSession(); // Tạo session nếu chưa có (cho user thường)
     } else if (_userId == -1) {
-      _messages.add(message); // Guest user: thêm tin nhắn mà không lưu
+      _messages.add(message);
       notifyListeners();
       _loadStatus = LoadStatus.loading;
       try {
@@ -122,7 +114,6 @@ class ChatProvider with ChangeNotifier {
       return;
     }
 
-    // Kiểm tra xem tin nhắn đã tồn tại chưa
     if (!_messages.contains(message)) {
       _messages.add(message);
       notifyListeners();
@@ -131,7 +122,7 @@ class ChatProvider with ChangeNotifier {
         final response = await _chatModel.generateResponse(message);
         if (response != null) {
           _messages.add(response);
-          await saveCurrentSession(_currentSessionId!);
+          await ChatDB.addChatMessage(_currentSessionId!, message, response); // Chèn cặp tin nhắn mới
           notifyListeners();
         }
         _loadStatus = LoadStatus.done;
