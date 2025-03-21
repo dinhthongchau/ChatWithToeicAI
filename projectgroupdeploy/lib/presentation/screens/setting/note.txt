@@ -1,0 +1,18 @@
+
+// class SignOutButton extends StatelessWidget {
+//   const SignOutButton({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return TextButton(onPressed: (){
+//       context.read<ChatProvider>().resetChat();
+//       context.read<AppAuthProvider>().signOut();
+//       Navigator.of(context).pushNamed(LoginScreen.route);
+//     }, child: Row(
+//       children: [
+//         Icon(Icons.exit_to_app),
+//         Text("Sign out"),
+//       ],
+//     ));
+//   }
+// }
