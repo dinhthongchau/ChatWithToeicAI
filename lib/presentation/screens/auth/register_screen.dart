@@ -28,12 +28,7 @@ class RegisterScreen extends StatelessWidget {
             child: const SizedBox.expand(),
           ),
           // Register Form
-          SingleChildScrollView(
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height,
-              child: const Body(),
-            ),
-          ),
+          const Body(), // Remove SingleChildScrollView and SizedBox from here
         ],
       ),
     );
@@ -88,142 +83,150 @@ class _BodyState extends State<Body> {
   Widget build(BuildContext context) {
     final authProvider = context.read<AppAuthProvider>();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Icon and Title
-          const Icon(
-            Icons.chat_bubble_outline,
-            size: 80,
-            color: Colors.white,
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            "TOEIC AI Chatbot",
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
+    return SingleChildScrollView(
+      // Move SingleChildScrollView here
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: 32.0, vertical: 16.0), // Add vertical padding
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Add some spacing at the top to avoid content being too close to the edge
+            SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+            // Icon and Title
+            const Icon(
+              Icons.chat_bubble_outline,
+              size: 80,
               color: Colors.white,
-              shadows: [
-                Shadow(
-                  color: Colors.black54,
-                  offset: Offset(2, 2),
-                  blurRadius: 4,
-                ),
-              ],
             ),
-          ),
-          const SizedBox(height: 32),
-          // Register Title
-          const Text(
-            "REGISTER",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              shadows: [
-                Shadow(
-                  color: Colors.black54,
-                  offset: Offset(2, 2),
-                  blurRadius: 4,
-                ),
-              ],
+            const SizedBox(height: 16),
+            const Text(
+              "TOEIC AI Chatbot",
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                shadows: [
+                  Shadow(
+                    color: Colors.black54,
+                    offset: Offset(2, 2),
+                    blurRadius: 4,
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 32),
-          // Email Field
-          _buildTextField(
-            controller: _emailController,
-            focusNode: _emailFocusNode,
-            obscureText: false,
-            label: "EMAIL",
-            icon: Icons.email_outlined,
-            keyboardType: TextInputType.visiblePassword,
-            onTap: () {
-              print("Email field tapped!");
-              FocusScope.of(context).requestFocus(_emailFocusNode);
-              if (_emailFocusNode.hasFocus) {
-                print("Email field has focus, ensuring keyboard is visible");
-              }
-            },
-          ),
-          const SizedBox(height: 16),
-          // Password Field
-          _buildTextField(
-            controller: _passwordController,
-            focusNode: _passwordFocusNode,
-            obscureText: true,
-            label: "PASSWORD",
-            icon: Icons.lock_outline,
-            keyboardType: TextInputType.visiblePassword,
-            onTap: () {
-              print("Password field tapped!");
-              FocusScope.of(context).requestFocus(_passwordFocusNode);
-              if (_passwordFocusNode.hasFocus) {
-                print("Password field has focus, ensuring keyboard is visible");
-              }
-            },
-          ),
-          const SizedBox(height: 16),
-          // Confirm Password Field
-          _buildTextField(
-            controller: _confirmPasswordController,
-            focusNode: _confirmPasswordFocusNode,
-            obscureText: true,
-            label: "CONFIRM PASSWORD",
-            icon: Icons.lock_outline,
-            keyboardType: TextInputType.visiblePassword,
-            onTap: () {
-              print("Confirm Password field tapped!");
-              FocusScope.of(context).requestFocus(_confirmPasswordFocusNode);
-              if (_confirmPasswordFocusNode.hasFocus) {
-                print(
-                    "Confirm Password field has focus, ensuring keyboard is visible");
-              }
-            },
-          ),
-          const SizedBox(height: 32),
-          // Register Button
-          _buildRegisterButton(authProvider),
-          const SizedBox(height: 16),
-          // Login Link
-          MouseRegion(
-            onEnter: (_) => setState(() => _isHovered = true),
-            onExit: (_) => setState(() => _isHovered = false),
-            child: TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
+            const SizedBox(height: 32),
+            // Register Title
+            const Text(
+              "REGISTER",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                shadows: [
+                  Shadow(
+                    color: Colors.black54,
+                    offset: Offset(2, 2),
+                    blurRadius: 4,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+            // Email Field
+            _buildTextField(
+              controller: _emailController,
+              focusNode: _emailFocusNode,
+              obscureText: false,
+              label: "EMAIL",
+              icon: Icons.email_outlined,
+              keyboardType: TextInputType
+                  .emailAddress, // Changed to emailAddress for better keyboard
+              onTap: () {
+                print("Email field tapped!");
+                FocusScope.of(context).requestFocus(_emailFocusNode);
+                if (_emailFocusNode.hasFocus) {
+                  print("Email field has focus, ensuring keyboard is visible");
+                }
               },
-              style: ButtonStyle(
-                overlayColor: WidgetStateProperty.all(
-                  _isHovered
-                      ? const Color(0xFF4FC3F7)
-                          .withOpacity(0.3) // userMessageColor
-                      : Colors.transparent,
+            ),
+            const SizedBox(height: 16),
+            // Password Field
+            _buildTextField(
+              controller: _passwordController,
+              focusNode: _passwordFocusNode,
+              obscureText: true,
+              label: "PASSWORD",
+              icon: Icons.lock_outline,
+              keyboardType: TextInputType.visiblePassword,
+              onTap: () {
+                print("Password field tapped!");
+                FocusScope.of(context).requestFocus(_passwordFocusNode);
+                if (_passwordFocusNode.hasFocus) {
+                  print(
+                      "Password field has focus, ensuring keyboard is visible");
+                }
+              },
+            ),
+            const SizedBox(height: 16),
+            // Confirm Password Field
+            _buildTextField(
+              controller: _confirmPasswordController,
+              focusNode: _confirmPasswordFocusNode,
+              obscureText: true,
+              label: "CONFIRM PASSWORD",
+              icon: Icons.lock_outline,
+              keyboardType: TextInputType.visiblePassword,
+              onTap: () {
+                print("Confirm Password field tapped!");
+                FocusScope.of(context).requestFocus(_confirmPasswordFocusNode);
+                if (_confirmPasswordFocusNode.hasFocus) {
+                  print(
+                      "Confirm Password field has focus, ensuring keyboard is visible");
+                }
+              },
+            ),
+            const SizedBox(height: 32),
+            // Register Button
+            _buildRegisterButton(authProvider),
+            const SizedBox(height: 16),
+            // Login Link
+            MouseRegion(
+              onEnter: (_) => setState(() => _isHovered = true),
+              onExit: (_) => setState(() => _isHovered = false),
+              child: TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: ButtonStyle(
+                  overlayColor: WidgetStateProperty.all(
+                    _isHovered
+                        ? const Color(0xFF4FC3F7).withOpacity(0.3)
+                        : Colors.transparent,
+                  ),
                 ),
-              ),
-              child: Text(
-                "Already have an account? Login",
-                style: TextStyle(
-                  color: _isHovered
-                      ? const Color(0xFF4FC3F7) // userMessageColor
-                      : Colors.white, // textColor
-                  fontWeight: _isHovered ? FontWeight.bold : FontWeight.normal,
-                  fontSize: 16,
-                  shadows: const [
-                    Shadow(
-                      color: Colors.black54,
-                      offset: Offset(1, 1),
-                      blurRadius: 3,
-                    ),
-                  ],
+                child: Text(
+                  "Already have an account? Login",
+                  style: TextStyle(
+                    color: _isHovered ? const Color(0xFF4FC3F7) : Colors.white,
+                    fontWeight:
+                        _isHovered ? FontWeight.bold : FontWeight.normal,
+                    fontSize: 16,
+                    shadows: const [
+                      Shadow(
+                        color: Colors.black54,
+                        offset: Offset(1, 1),
+                        blurRadius: 3,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+            // Add some spacing at the bottom to avoid content being too close to the edge
+            SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+          ],
+        ),
       ),
     );
   }
@@ -244,22 +247,20 @@ class _BodyState extends State<Body> {
       keyboardType: keyboardType,
       onTap: onTap,
       decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: Colors.white70), // textColor
+        prefixIcon: Icon(icon, color: Colors.white70),
         labelText: label,
-        labelStyle:
-            const TextStyle(color: Colors.white70),
+        labelStyle: const TextStyle(color: Colors.white70),
         filled: false,
-        border:  OutlineInputBorder(
+        border: OutlineInputBorder(
           borderSide: BorderSide(color: Color(0xFF4FC3F7)),
           borderRadius: BorderRadius.circular(30),
         ),
-        enabledBorder:  OutlineInputBorder(
+        enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Color(0xFF4FC3F7)),
           borderRadius: BorderRadius.circular(30),
         ),
-        focusedBorder:  OutlineInputBorder(
-          borderSide: BorderSide(
-              color: Color(0xFF4FC3F7), width: 2),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF4FC3F7), width: 2),
           borderRadius: BorderRadius.circular(30),
         ),
       ),
