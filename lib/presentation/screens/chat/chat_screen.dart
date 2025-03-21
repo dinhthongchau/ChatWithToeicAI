@@ -165,11 +165,32 @@ class ChatScreenPage extends StatelessWidget {
                           fontSize: 16.0,
                         );
                       })
-                  : TextButton(
-                      onPressed: () {
+                  : Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: GestureDetector(
+                      onTap: () {
                         Navigator.of(context).pushNamed(LoginScreen.route);
                       },
-                      child: Text("Login")),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent, 
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: themeProvider.inputBorderColor, 
+                            width: 2,
+                          ),
+                        ),
+                        child: Text(
+                          "Login",
+                          style: TextStyle(
+                            color: themeProvider.textColor, 
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
             ],
           ),
           body: Stack(
