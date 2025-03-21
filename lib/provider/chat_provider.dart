@@ -121,22 +121,23 @@ class ChatProvider with ChangeNotifier {
       }
       return;
     }
-    _messages.add(message);
-    notifyListeners();
-    _loadStatus = LoadStatus.loading;
-    try {
-      final response = await _chatModel.generateResponse(message);
-      if (response != null) {
-        _messages.add(response);
-        //dòng mới
-        // await _chatDatabase.saveChatSession(
-        //     _userId!, _currentSessionId!, _messages);
-        await saveCurrentSession(_currentSessionId!);
-        notifyListeners();
+
+    // Kiểm tra xem tin nhắn đã tồn tại chưa
+    if (!_messages.contains(message)) {
+      _messages.add(message);
+      notifyListeners();
+      _loadStatus = LoadStatus.loading;
+      try {
+        final response = await _chatModel.generateResponse(message);
+        if (response != null) {
+          _messages.add(response);
+          await saveCurrentSession(_currentSessionId!);
+          notifyListeners();
+        }
+        _loadStatus = LoadStatus.done;
+      } catch (e) {
+        _loadStatus = LoadStatus.error;
       }
-      _loadStatus = LoadStatus.done;
-    } catch (e) {
-      _loadStatus = LoadStatus.error;
     }
   }
 
@@ -223,8 +224,8 @@ void scrollToBottom(ScrollController scrollController) {
   // Tải tin nhắn từ session hiện tại
   Future<void> loadMessages() async {
     if (_userId == null || _currentSessionId == null) return;
-    _messages =
-        await ChatDB.loadChatMessages(_userId!, _currentSessionId!);
+    _messages.clear();
+    _messages =await ChatDB.loadChatMessages(_userId!, _currentSessionId!);
     notifyListeners();
   }
 
