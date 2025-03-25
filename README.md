@@ -5,8 +5,8 @@ This is a mobile application built with Flutter, utilizing the Gemini API for AI
 ![image](https://github.com/user-attachments/assets/5daf7d84-7229-4a9e-baf9-bc2119281e26)
 
 ## Link APK && Youtube Demo: 
--	Youtube link: ![link](https://www.youtube.com/shorts/EoIgR3SxiVg)
--	File Apk link: ![link](https://drive.google.com/file/d/1EcidZvwbDHu3S_nAEtydSYdC8Nd2pHo2/view?usp=sharing)
+-	Youtube link: https://www.youtube.com/shorts/EoIgR3SxiVg
+-	File Apk link: https://drive.google.com/file/d/1EcidZvwbDHu3S_nAEtydSYdC8Nd2pHo2/view?usp=sharing
 
 ## Features
 Log in or register with email and password, or use as a guest
