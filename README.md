@@ -2,7 +2,11 @@
 
 This is a mobile application built with Flutter, utilizing the Gemini API for AI-powered TOEIC practice. It supports offline data storage with SQLite and is designed to enhance TOEIC skills through translations, grammar explanations, vocabulary, and test tips. The app is deployed as an APK for Android devices and features a responsive UI with Provider for state management.
 ## Screenshots
+![image](https://github.com/user-attachments/assets/5daf7d84-7229-4a9e-baf9-bc2119281e26)
 
+## Link APK && Youtube Demo: 
+-	Youtube link: ![link](https://www.youtube.com/shorts/EoIgR3SxiVg)
+-	File Apk link: ![link](https://drive.google.com/file/d/1EcidZvwbDHu3S_nAEtydSYdC8Nd2pHo2/view?usp=sharing)
 
 ## Features
 Log in or register with email and password, or use as a guest
@@ -30,6 +34,9 @@ Navigation uses named routes with GetX for smooth transitions
 
 
 ## More images 
+
+![image](https://github.com/user-attachments/assets/3d818928-323b-4fa9-8853-abfeae4a1a45)
+
 
 
 
