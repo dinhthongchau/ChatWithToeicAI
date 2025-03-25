@@ -9,12 +9,12 @@ This is a mobile application built with Flutter, utilizing the Gemini API for AI
 -	File Apk link: https://drive.google.com/file/d/1EcidZvwbDHu3S_nAEtydSYdC8Nd2pHo2/view?usp=sharing
 
 ## Features
-Log in or register with email and password, or use as a guest
-Chat with AI to improve TOEIC skills (translations, grammar, vocabulary, tips)
-View and manage chat history (rename, delete sessions)
-Switch between light and dark themes
-Access a user guide for instructions
-Custom splash screen and app icon
+- Log in or register with email and password, or use as a guest
+- Chat with AI to improve TOEIC skills (translations, grammar, vocabulary, tips)
+- View and manage chat history (rename, delete sessions)
+- Switch between light and dark themes
+- Access a user guide for instructions
+- Custom splash screen and app icon
 
 ## Prerequisites
 - Create a `dotenv` file in the root folder (use `dotenv(example)` as a template)
