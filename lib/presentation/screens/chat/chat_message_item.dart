@@ -56,33 +56,37 @@ class ChatMessageList extends StatelessWidget {
               ),
             ),
             if (!isUserMessage)
-              Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.copy, size: 20, color: themeProvider.textColor),
-                    tooltip: 'Sao chép tin nhắn',
-                    onPressed: () {
-                      context.read<ChatProvider>().copyMessage(chatProvider.messages[index]);
-                    },
-                  ),
-                  context.watch<TextToSpeechProvider>().loadStatus == LoadStatusTts.isPlaying
-                      ? IconButton(
-                    icon: Icon(Icons.stop, size: 20, color: themeProvider.textColor),
-                    onPressed: () {
-                      context.read<TextToSpeechProvider>().stop();
-                    },
-                  )
-                      : IconButton(
-                    icon: Icon(Icons.volume_up, size: 20, color: themeProvider.textColor),
-                    onPressed: () {
-                      context.read<TextToSpeechProvider>().speak(chatProvider.messages[index]);
-                    },
-                  ),
-                ],
-              ),
+              buildActionsMessage(context, index),
           ],
         );
       },
     );
+  }
+
+  Row buildActionsMessage(BuildContext context, int index) {
+    return Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.copy, size: 20, color: themeProvider.textColor),
+                  tooltip: 'Sao chép tin nhắn',
+                  onPressed: () {
+                    context.read<ChatProvider>().copyMessage(chatProvider.messages[index]);
+                  },
+                ),
+                context.watch<TextToSpeechProvider>().loadStatus == LoadStatusTts.isPlaying
+                    ? IconButton(
+                  icon: Icon(Icons.stop, size: 20, color: themeProvider.textColor),
+                  onPressed: () {
+                    context.read<TextToSpeechProvider>().stop();
+                  },
+                )
+                    : IconButton(
+                  icon: Icon(Icons.volume_up, size: 20, color: themeProvider.textColor),
+                  onPressed: () {
+                    context.read<TextToSpeechProvider>().speak(chatProvider.messages[index]);
+                  },
+                ),
+              ],
+            );
   }
 }

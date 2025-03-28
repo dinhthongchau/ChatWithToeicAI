@@ -306,7 +306,7 @@ class Body extends StatelessWidget {
     );
   }
 
-  Container buildContainerChatInputBox(BuildContext context, void sendMessage()) {
+  Container buildContainerChatInputBox(BuildContext context, void Function() sendMessage) {
     return Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
@@ -372,85 +372,4 @@ class Body extends StatelessWidget {
       );
   }
 
-  ListView buildListViewForMessage(ChatProvider chatProvider, ThemeProvider themeProvider) {
-    return ListView.builder(
-              controller: _scrollController,
-              padding: EdgeInsets.all(25),
-              itemCount: chatProvider.messages.length,
-              itemBuilder: (context, index) {
-                bool isUserMessage = index.isEven;
-                return Column(
-                  crossAxisAlignment: isUserMessage
-                      ? CrossAxisAlignment.end
-                      : CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-                      margin: EdgeInsets.symmetric(vertical: 5),
-                      decoration: BoxDecoration(
-                        color: isUserMessage
-                            ? themeProvider.userMessageColor
-                            : themeProvider.botMessageColor,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(isUserMessage ? 16 : 2),
-                          topRight: Radius.circular(isUserMessage ? 2 : 16),
-                          bottomLeft: Radius.circular(16),
-                          bottomRight: Radius.circular(16),
-                        ),
-                      ),
-                      child: MarkdownBody(
-                        data: chatProvider.messages[index],
-                        selectable: true,
-                        styleSheet: MarkdownStyleSheet(
-                          p: TextStyle(
-                            fontSize: 16,
-                            color: themeProvider.textColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                    if (!isUserMessage) buildRowMessageActionButtons(themeProvider, context, chatProvider, index),
-                  ],
-                );
-              },
-            );
-  }
-
-  Row buildRowMessageActionButtons(ThemeProvider themeProvider, BuildContext context, ChatProvider chatProvider, int index) {
-    return Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.copy,
-                            size: 20,
-                            color: themeProvider
-                                .textColor), // Đổi màu icon theo theme
-                        tooltip: 'Sao chép tin nhắn',
-                        onPressed: () {
-                          context
-                              .read<ChatProvider>()
-                              .copyMessage(chatProvider.messages[index]);
-                        },
-                      ),
-
-                        context.watch<TextToSpeechProvider>().loadStatus == LoadStatusTts.isPlaying
-                          ? IconButton(
-                              icon: Icon(Icons.stop,
-                                  size: 20, color: themeProvider.textColor),
-                              onPressed: () {
-                                context.read<TextToSpeechProvider>().stop();
-                              },
-                            )
-                          : IconButton(
-                              icon: Icon(Icons.volume_up,
-                                  size: 20, color: themeProvider.textColor),
-                              onPressed: () {
-                                context
-                                    .read<TextToSpeechProvider>()
-                                    .speak(chatProvider.messages[index]);
-                              },
-                            ),
-                    ],
-                  );
-  }
 }
