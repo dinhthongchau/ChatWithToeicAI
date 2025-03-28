@@ -14,7 +14,6 @@ class TextToSpeechProvider with ChangeNotifier{
       await flutterTts.setLanguage('en-US');
       await flutterTts.setPitch(1.0);
       await flutterTts.setSpeechRate(0.6);
-
       await flutterTts.speak(text);
 
     }

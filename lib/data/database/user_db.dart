@@ -25,7 +25,7 @@ class UserDB {
     }
     return null;
   }
-
+  // get User ID
   static Future<int?> getUserIdByEmail(String email) async {
     final db = await DBHelper.database;
     List<Map<String, dynamic>> result = await db.query(

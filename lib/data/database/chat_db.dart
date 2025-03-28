@@ -1,8 +1,4 @@
-// lưu trữ dữ liệu
-
-// import 'package:sqflite/sqflite.dart';
 import 'package:intl/intl.dart';
-
 import '../models/chat_message_model.dart';
 import 'db_helper.dart';
 
@@ -11,7 +7,7 @@ class ChatDB {
   static Future<String> createChatSession(int userId) async {
     final db = await DBHelper.database;
 
-    // Check for existing empty session
+    // Kiểm tra xem có phiên trò chuyện rỗng tồn tại không
     List<Map<String, dynamic>> existingSessions = await db.query(
       'chat_sessions',
       where: 'user_id = ?',
@@ -22,6 +18,7 @@ class ChatDB {
 
     if (existingSessions.isNotEmpty) {
       String existingSessionId = existingSessions.first['chat_sessions_id'] as String;
+      // Lấy tất cả tin nhắn của phiên trò chuyện hiện tại
       List<Map<String, dynamic>> messages = await db.query(
         'chat_messages',
         where: 'chat_sessions_id = ?',
@@ -43,6 +40,7 @@ class ChatDB {
 
   static Future<List<String>> getUserChatHistory(int userId) async {
     final db = await DBHelper.database;
+    // get list
     List<Map<String, dynamic>> result = await db.query(
       'chat_sessions',
       where: 'user_id = ?',
@@ -55,6 +53,7 @@ class ChatDB {
   // Thêm một đoạn tin nhắn mới vào một phiên trò chuyện
   static Future<int> addChatMessage(String chatSessionsId, String userMessage, String aiResponse) async {
     final db = await DBHelper.database;
+    // store message user + reply AI
     return await db.insert('chat_messages', {
       'chat_sessions_id': chatSessionsId,
       'user_message': userMessage,
@@ -75,7 +74,7 @@ class ChatDB {
     );
     return result.map((e) => ChatMessageModel.fromMap(e)).toList();
   }
-
+  //store message of chat session to DB
   static Future<void> saveChatSession(int userId, String sessionId, List<String> messages) async {
     final db = await DBHelper.database;
     int sessionExists = (await db.query(
@@ -119,7 +118,7 @@ class ChatDB {
     return messages;
   }
 
-  // Đổi tên phiên chat
+  // Đổi tên phiên chat vs chat_sessions và chat_messages
   static Future<void> renameChatSession(
       int userId, String oldSessionId, String newSessionId) async {
     final db = await DBHelper.database;
@@ -147,7 +146,7 @@ class ChatDB {
     }
   }
 
-  // Xóa phiên chat
+  // Xóa phiên chat vs chat_sessions và chat_messages
   static Future<void> deleteChatSession(int userId, String sessionId) async {
     final db = await DBHelper.database;
     var session = await db.query(

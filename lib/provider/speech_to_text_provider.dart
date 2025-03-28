@@ -28,6 +28,7 @@ class SpeechToTextProvider extends ChangeNotifier {
         debugLogging: true,
       );
       if (hasSpeech) {
+        // mã định danh ngôn ngữ hiện tại (Locale ID)
         var systemLocale = await _speech.systemLocale();
         _currentLocaleId = systemLocale?.localeId ?? '';
         print('Speech initialized successfully, locale: $_currentLocaleId');
@@ -43,7 +44,7 @@ class SpeechToTextProvider extends ChangeNotifier {
     }
   }
 
-  // Bắt đầu ghi âm với controller từ ngoài
+  // Bắt đầu ghi âm với controller
   void startListening(TextEditingController controller) {
     if (!_hasSpeech || _isListening) return;
     controller.clear();
