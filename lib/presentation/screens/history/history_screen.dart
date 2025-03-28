@@ -4,6 +4,7 @@ import '../../../provider/chat_provider.dart';
 import '../../../provider/history_visibility_provider.dart';
 import '../setting/setting_dialog.dart';
 import '../../../provider/theme_provider.dart';
+import 'history_chat_item.dart';
 import 'history_options_dialog.dart';
 import '../chat/chat_screen.dart';
 
@@ -49,22 +50,26 @@ class CustomHistoryAppBar extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    return buildAppBar(isLandscape, context);
+  }
+
+  AppBar buildAppBar(bool isLandscape, BuildContext context) {
     return AppBar(
-      title: !isLandscape ? Text("History Chat") : Text("List",),
-      leading: IconButton(
-          onPressed: () {
-            final historyProvider = context.read<HistoryVisibilityProvider>();
+    title: !isLandscape ? Text("History Chat") : Text("List",),
+    leading: IconButton(
+        onPressed: () {
+          final historyProvider = context.read<HistoryVisibilityProvider>();
 
-            if (isLandscape && historyProvider.isHistoryVisible == true) {
-              historyProvider.hideHistory(); // Toggle trong landscape
-            } else{
-              Navigator.of(context).popUntil(ModalRoute.withName(ChatScreen.route));
-              historyProvider.showHistory();
-            }
+          if (isLandscape && historyProvider.isHistoryVisible == true) {
+            historyProvider.hideHistory(); // Toggle trong landscape
+          } else{
+            Navigator.of(context).popUntil(ModalRoute.withName(ChatScreen.route));
+            historyProvider.showHistory();
+          }
 
-          },
-          icon: Icon(Icons.arrow_back)),
-    );
+        },
+        icon: Icon(Icons.arrow_back)),
+  );
   }
 
   @override
@@ -148,52 +153,34 @@ class Body extends StatelessWidget {
         if (chatHistory.isEmpty) {
           return const Center(child: Text("No chat history available."));
         }
-        return ListView.builder(
-          itemCount: chatHistory.length,
-          itemBuilder: (context, index) {
-            final sessionId = chatHistory[index];
-            final isSelected = sessionId == chatProvider.currentSessionId;
-            final isLandscape =
-                MediaQuery.of(context).orientation == Orientation.landscape;
-            return Center(
-              child: GestureDetector(
-                onLongPress: () {
-                  showOptionsDialog(context, sessionId);
-                },
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  padding: EdgeInsets.all(4),
-                  margin: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: themeProvider.ChatbotColor,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isSelected
-                          ? (themeProvider.isLightTheme == false
-                              ? Colors.white
-                              : Colors.black)
-                          : themeProvider.historyBorderColor,
-                      width: 3.0,
-                    ),
-                  ),
-                  child: ListTile(
-                    title: Text(
-                      sessionId,
-                      style: TextStyle(color: themeProvider.textColor),
-                    ),
-                    onTap: () {
-                      chatProvider.loadSession(sessionId);
-                      if (!isLandscape) {
-                        Navigator.pop(context);
-                      }
-                    },
-                  ),
-                ),
-              ),
-            );
-          },
-        );
+        return buildListViewChatList(chatHistory, chatProvider, themeProvider);
       },
     );
+  }
+
+  ListView buildListViewChatList(List<String> chatHistory, ChatProvider chatProvider, ThemeProvider themeProvider) {
+    return ListView.builder(
+        itemCount: chatHistory.length,
+        itemBuilder: (context, index) {
+          final sessionId = chatHistory[index];
+          final isSelected = sessionId == chatProvider.currentSessionId;
+          final isLandscape =
+              MediaQuery.of(context).orientation == Orientation.landscape;
+          return Center(
+            child: GestureDetector(
+              onLongPress: () {
+                showOptionsDialog(context, sessionId);
+              },
+              child: ChatHistoryItem(
+                sessionId: sessionId,
+                isSelected: isSelected,
+                chatProvider: chatProvider,
+                themeProvider: themeProvider,
+                isLandscape: isLandscape,
+              ),
+            ),
+          );
+        },
+      );
   }
 }

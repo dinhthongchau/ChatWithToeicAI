@@ -26,36 +26,45 @@ void showOptionsDialog(BuildContext context, String sessionId) {
         ),
         actions: [
           // Nút đổi tên
-          TextButton(
-            onPressed: () {
-              final newName = renameController.text.trim();
-              if (newName.isNotEmpty && newName != sessionId) {
-                context  .read<ChatProvider>().renameChatSession(sessionId, newName);
-                //context  .read<ChatProvider>().renameChatSession("56", "566");
-              }
-              Navigator.pop(context); // Đóng dialog sau khi đổi tên
-            },
-            child: Row(
-              children: [Text("Rename"), Icon(Icons.edit)],
-            ),
-          ),
-          // Nút xóa
-          TextButton(
-            onPressed: () {
-              context.read<ChatProvider>().deleteChatSession(sessionId);
-              if (!context.mounted) return;
-              Navigator.pop(context); // Đóng dialog sau khi xóa
-            },
-            child: Row(
-              children: [
-                Text("Delete", style: TextStyle(color: Colors.red)),
-                Icon(Icons.delete, color: Colors.red)
-              ],
-            ),
-          ),
-          // Nút hủy
+          buildActionChatOptions(renameController, sessionId, context),
+
+
         ],
       );
     },
   );
+}
+
+Row buildActionChatOptions(TextEditingController renameController, String sessionId, BuildContext context) {
+  return Row(
+          children: [
+            TextButton(
+              onPressed: () {
+                final newName = renameController.text.trim();
+                if (newName.isNotEmpty && newName != sessionId) {
+                  context  .read<ChatProvider>().renameChatSession(sessionId, newName);
+                  //context  .read<ChatProvider>().renameChatSession("56", "566");
+                }
+                Navigator.pop(context); // Đóng dialog sau khi đổi tên
+              },
+              child: Row(
+                children: [Text("Rename"), Icon(Icons.edit)],
+              ),
+            ),
+            // Nút xóa
+            TextButton(
+              onPressed: () {
+                context.read<ChatProvider>().deleteChatSession(sessionId);
+                if (!context.mounted) return;
+                Navigator.pop(context); // Đóng dialog sau khi xóa
+              },
+              child: Row(
+                children: [
+                  Text("Delete", style: TextStyle(color: Colors.red)),
+                  Icon(Icons.delete, color: Colors.red)
+                ],
+              ),
+            ),
+          ],
+        );
 }
