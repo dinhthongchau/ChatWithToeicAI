@@ -1,6 +1,8 @@
 import 'package:ct312hm01_temp/core/enum/load_status.dart';
+import 'package:ct312hm01_temp/core/enum/load_tts_status.dart';
 import 'package:ct312hm01_temp/presentation/screens/auth/login_screen.dart';
 import 'package:ct312hm01_temp/presentation/screens/history/history_screen.dart';
+import 'package:ct312hm01_temp/provider/text_to_speech_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../provider/history_visibility_provider.dart';
@@ -16,7 +18,7 @@ class ChatScreen extends StatefulWidget {
   static const String route = "/chat";
   final int? userId;
 
-  const ChatScreen({super.key,  this.userId});
+  const ChatScreen({super.key, this.userId});
 
   @override
   ChatScreenState createState() => ChatScreenState();
@@ -60,26 +62,26 @@ class ChatScreenState extends State<ChatScreen> {
           builder: (context, historyProvider, child) {
             return isLandscape
                 ? Row(
-              children: [
-                if (historyProvider.isHistoryVisible)
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.2,
-                    child: ChatHistoryScreen(),
-                  ),
-                Expanded(
-                  child: ChatScreenPage(
+                    children: [
+                      if (historyProvider.isHistoryVisible)
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          child: ChatHistoryScreen(),
+                        ),
+                      Expanded(
+                        child: ChatScreenPage(
+                          chatProvider: chatProvider,
+                          inputController: _inputController,
+                          scrollController: _scrollController,
+                        ),
+                      ),
+                    ],
+                  )
+                : ChatScreenPage(
                     chatProvider: chatProvider,
                     inputController: _inputController,
                     scrollController: _scrollController,
-                  ),
-                ),
-              ],
-            )
-                : ChatScreenPage(
-              chatProvider: chatProvider,
-              inputController: _inputController,
-              scrollController: _scrollController,
-            );
+                  );
           },
         );
       },
@@ -102,126 +104,153 @@ class ChatScreenPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Page(chatProvider: chatProvider, inputController: _inputController, scrollController: _scrollController);
+  }
+}
+
+class Page extends StatelessWidget {
+  const Page({
+    super.key,
+    required this.chatProvider,
+    required TextEditingController inputController,
+    required ScrollController scrollController,
+  }) : _inputController = inputController, _scrollController = scrollController;
+
+  final ChatProvider chatProvider;
+  final TextEditingController _inputController;
+  final ScrollController _scrollController;
+
+  @override
+  Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         //call when initialize
 
         return Scaffold(
           backgroundColor: themeProvider.backgroundColor,
-          appBar: AppBar(
-            backgroundColor: themeProvider.ChatbotColor,
-            leadingWidth: 120,
-            leading: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  onPressed: () =>
-                      Navigator.of(context).pushNamed(ChatHistoryScreen.route),
-                  icon: Icon(
-                    Icons.format_list_bulleted,
-                    color: themeProvider.textColor,
-                    size: 35,
-                  ),
+          appBar: buildAppBar(themeProvider, context),
+          body: buildStack(themeProvider),
+        );
+      },
+    );
+  }
+
+  AppBar buildAppBar(ThemeProvider themeProvider, BuildContext context) {
+    return AppBar(
+          backgroundColor: themeProvider.ChatbotColor,
+          leadingWidth: 120,
+          leading: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                onPressed: () =>
+                    Navigator.of(context).pushNamed(ChatHistoryScreen.route),
+                icon: Icon(
+                  Icons.format_list_bulleted,
+                  color: themeProvider.textColor,
+                  size: 35,
                 ),
-              ],
-            ),
-            title: Row(
-              children: [
-                CircleAvatar(
-                  radius: 18,
-                  backgroundImage: AssetImage('assets/avatar/logo.png'),
+              ),
+            ],
+          ),
+          title: Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundImage: AssetImage('assets/avatar/logo.png'),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                'TOEIC AI',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: themeProvider.textColor,
                 ),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  'TOEIC AI',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: themeProvider.textColor,
-                  ),
-                ),
-              ],
-            ),
-            centerTitle: true,
-            actions: [
-              context.read<ChatProvider>().userId != -1
-                  ? IconButton(
-                      icon: Icon(
-                        Icons.add_circle_outline,
-                        color: themeProvider.textColor,
-                        size: 35,
-                      ),
-                      onPressed: () {
-                        chatProvider.startNewSession();
-                        Fluttertoast.showToast(
-                          msg: "New chat created",
-                          toastLength: Toast.LENGTH_LONG,
-                          gravity: ToastGravity.CENTER,
-                          //Flutter web không hổ trợ căn giữa cho Fluttertoast, nó sẽ hiển thị ở góc phải trên màn hình
-                          backgroundColor: Colors.black,
-                          //cũng không hổ trợ chỉnh màu nền ở web, còn chạy emulator android ios thì bình thường
-                          textColor: Colors.white,
-                          fontSize: 16.0,
-                        );
-                      })
-                  : Padding(
+              ),
+            ],
+          ),
+          centerTitle: true,
+          actions: [
+            context.read<ChatProvider>().userId != -1
+                ? IconButton(
+                    icon: Icon(
+                      Icons.add_circle_outline,
+                      color: themeProvider.textColor,
+                      size: 35,
+                    ),
+                    onPressed: () {
+                      chatProvider.startNewSession();
+                      Fluttertoast.showToast(
+                        msg: "New chat created",
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.CENTER,
+                        //Flutter web không hổ trợ căn giữa cho Fluttertoast, nó sẽ hiển thị ở góc phải trên màn hình
+                        backgroundColor: Colors.black,
+                        //cũng không hổ trợ chỉnh màu nền ở web, còn chạy emulator android ios thì bình thường
+                        textColor: Colors.white,
+                        fontSize: 16.0,
+                      );
+                    })
+                : Padding(
                     padding: const EdgeInsets.only(right: 16.0),
                     child: GestureDetector(
                       onTap: () {
                         Navigator.of(context).pushNamed(LoginScreen.route);
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
-                          color: Colors.transparent, 
+                          color: Colors.transparent,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: themeProvider.inputBorderColor, 
+                            color: themeProvider.inputBorderColor,
                             width: 2,
                           ),
                         ),
                         child: Text(
                           "Login",
                           style: TextStyle(
-                            color: themeProvider.textColor, 
+                            color: themeProvider.textColor,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
                   ),
-            ],
-          ),
-          body: Stack(
-            children: [
-              Body(
-                controller: _inputController,
-                // need controller for listview
-                scrollController: _scrollController,
-              ),
-              Positioned(
-                bottom: 95,
-                right: 20,
-                child: SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: FloatingActionButton(
-                    backgroundColor: themeProvider.botMessageColor,
-                    mini: true,
-                    onPressed: () {
-                      chatProvider.scrollToBottom(_scrollController);
-                    },
-                    child: Icon(Icons.expand_more,
-                        size: 25, color: themeProvider.textColor),
-                  ),
+          ],
+        );
+  }
+
+  Stack buildStack(ThemeProvider themeProvider) {
+    return Stack(
+          children: [
+            Body(
+              controller: _inputController,
+              // need controller for listview
+              scrollController: _scrollController,
+            ),
+            Positioned(
+              bottom: 95,
+              right: 20,
+              child: SizedBox(
+                width: 30,
+                height: 30,
+                child: FloatingActionButton(
+                  backgroundColor: themeProvider.botMessageColor,
+                  mini: true,
+                  onPressed: () {
+                    chatProvider.scrollToBottom(_scrollController);
+                  },
+                  child: Icon(Icons.expand_more,
+                      size: 25, color: themeProvider.textColor),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         );
-      },
-    );
   }
 }
 
@@ -263,43 +292,129 @@ class Body extends StatelessWidget {
               final themeProvider =
                   context.watch<ThemeProvider>(); // Lấy theme hiện tại
 
-              return ListView.builder(
-                controller: _scrollController,
-                padding: EdgeInsets.all(25),
-                itemCount: chatProvider.messages.length,
-                itemBuilder: (context, index) {
-                  bool isUserMessage = index.isEven;
-                  return Column(
-                    crossAxisAlignment: isUserMessage
-                        ? CrossAxisAlignment.end
-                        : CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-                        margin: EdgeInsets.symmetric(vertical: 5),
-                        decoration: BoxDecoration(
-                          color: isUserMessage
-                              ? themeProvider.userMessageColor
-                              : themeProvider.botMessageColor,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(isUserMessage ? 16 : 2),
-                            topRight: Radius.circular(isUserMessage ? 2 : 16),
-                            bottomLeft: Radius.circular(16),
-                            bottomRight: Radius.circular(16),
-                          ),
+              return buildListViewForMessage(chatProvider, themeProvider);
+            },
+          ),
+        ),
+        buildContainerChatInputBox(context, sendMessage),
+      ],
+    );
+  }
+
+  Container buildContainerChatInputBox(BuildContext context, void sendMessage()) {
+    return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: context
+              .watch<ThemeProvider>()
+              .inputBoxColor, // Màu nền theo theme
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: context
+                .watch<ThemeProvider>()
+                .inputBorderColor, // Màu viền theo theme
+            width: 2,
+          ),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _inputController,
+                style: TextStyle(
+                    color: context
+                        .watch<ThemeProvider>()
+                        .textColor), // Màu chữ theo theme
+                decoration: InputDecoration(
+                  hintText: 'Ask anything you want about TOEIC!!!',
+                  hintStyle: TextStyle(
+                      color: context
+                          .watch<ThemeProvider>()
+                          .textColor
+                          .withAlpha((0.6 * 255).toInt())), // Màu gợi ý
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+            Consumer<ChatProvider>(
+              builder: (context, chatProvider, child) {
+                return chatProvider.loadStatus == LoadStatus.loading
+                    ? Center(
+                        child: CustomLoadingIndicator(
+                        color: Colors.red,
+                        size: 30.0,
+                      ))
+                    : IconButton(
+                        icon: Icon(Icons.send,
+                            color: context
+                                .watch<ThemeProvider>()
+                                .textColor), // Màu icon theo theme
+                        onPressed: () {
+                          if (_inputController.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              customNoticeSnackbar(
+                                  context, "Please ask question", true),
+                            );
+                          } else {
+                            sendMessage();
+                          }
+                        });
+              },
+            ),
+          ],
+        ),
+      );
+  }
+
+  ListView buildListViewForMessage(ChatProvider chatProvider, ThemeProvider themeProvider) {
+    return ListView.builder(
+              controller: _scrollController,
+              padding: EdgeInsets.all(25),
+              itemCount: chatProvider.messages.length,
+              itemBuilder: (context, index) {
+                bool isUserMessage = index.isEven;
+                return Column(
+                  crossAxisAlignment: isUserMessage
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+                      margin: EdgeInsets.symmetric(vertical: 5),
+                      decoration: BoxDecoration(
+                        color: isUserMessage
+                            ? themeProvider.userMessageColor
+                            : themeProvider.botMessageColor,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(isUserMessage ? 16 : 2),
+                          topRight: Radius.circular(isUserMessage ? 2 : 16),
+                          bottomLeft: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
                         ),
-                        child: MarkdownBody(
-                          data: chatProvider.messages[index],
-                          selectable: true,
-                          styleSheet: MarkdownStyleSheet(
-                            p: TextStyle(
-                              fontSize: 16,
-                              color: themeProvider.textColor,
-                            ),
+                      ),
+                      child: MarkdownBody(
+                        data: chatProvider.messages[index],
+                        selectable: true,
+                        styleSheet: MarkdownStyleSheet(
+                          p: TextStyle(
+                            fontSize: 16,
+                            color: themeProvider.textColor,
                           ),
                         ),
                       ),
+                    ),
+                    if (!isUserMessage) buildRowMessageActionButtons(themeProvider, context, chatProvider, index),
+                  ],
+                );
+              },
+            );
+  }
+
+  Row buildRowMessageActionButtons(ThemeProvider themeProvider, BuildContext context, ChatProvider chatProvider, int index) {
+    return Row(
+                    children: [
                       IconButton(
                         icon: Icon(Icons.copy,
                             size: 20,
@@ -312,77 +427,25 @@ class Body extends StatelessWidget {
                               .copyMessage(chatProvider.messages[index]);
                         },
                       ),
+
+                        context.watch<TextToSpeechProvider>().loadStatus == LoadStatusTts.isPlaying
+                          ? IconButton(
+                              icon: Icon(Icons.stop,
+                                  size: 20, color: themeProvider.textColor),
+                              onPressed: () {
+                                context.read<TextToSpeechProvider>().stop();
+                              },
+                            )
+                          : IconButton(
+                              icon: Icon(Icons.volume_up,
+                                  size: 20, color: themeProvider.textColor),
+                              onPressed: () {
+                                context
+                                    .read<TextToSpeechProvider>()
+                                    .speak(chatProvider.messages[index]);
+                              },
+                            ),
                     ],
                   );
-                },
-              );
-            },
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            color: context
-                .watch<ThemeProvider>()
-                .inputBoxColor, // Màu nền theo theme
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: context
-                  .watch<ThemeProvider>()
-                  .inputBorderColor, // Màu viền theo theme
-              width: 2,
-            ),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _inputController,
-                  style: TextStyle(
-                      color: context
-                          .watch<ThemeProvider>()
-                          .textColor), // Màu chữ theo theme
-                  decoration: InputDecoration(
-                    hintText: 'Ask anything you want about TOEIC!!!',
-                    hintStyle: TextStyle(
-                        color: context
-                            .watch<ThemeProvider>()
-                            .textColor
-                            .withAlpha((0.6 * 255).toInt())), // Màu gợi ý
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
-              Consumer<ChatProvider>(
-                builder: (context, chatProvider, child) {
-                  return chatProvider.loadStatus == LoadStatus.loading
-                      ? Center(
-                          child: CustomLoadingIndicator(
-                          color: Colors.red,
-                          size: 30.0,
-                        ))
-                      : IconButton(
-                          icon: Icon(Icons.send,
-                              color: context
-                                  .watch<ThemeProvider>()
-                                  .textColor), // Màu icon theo theme
-                          onPressed: () {
-                            if (_inputController.text.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                customNoticeSnackbar(
-                                    context, "Please ask question", true),
-                              );
-                            } else {
-                              sendMessage();
-                            }
-                          });
-                },
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
   }
 }
