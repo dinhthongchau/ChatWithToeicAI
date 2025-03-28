@@ -13,6 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../../common_widgets/custom_notice_snackbar.dart';
+import 'chat_message_item.dart';
 
 class ChatScreen extends StatefulWidget {
   static const String route = "/chat";
@@ -292,7 +293,11 @@ class Body extends StatelessWidget {
               final themeProvider =
                   context.watch<ThemeProvider>(); // Lấy theme hiện tại
 
-              return buildListViewForMessage(chatProvider, themeProvider);
+              return ChatMessageList(
+                chatProvider: chatProvider,
+                themeProvider: themeProvider,
+                scrollController: _scrollController,
+              );
             },
           ),
         ),
