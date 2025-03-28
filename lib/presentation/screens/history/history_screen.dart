@@ -109,10 +109,10 @@ class BottomNavigationBar extends StatelessWidget {
                     backgroundColor: themeProvider
                         .inputBorderColor, // Màu nền nếu không có ảnh
                   ),
-                  SizedBox(width: 10),
+                  //SizedBox(width: 10),
                   Text(
                     chatProvider.userId == -1
-                        ? "Guest"
+                        ? "Null"
                         : (isLandscape
                             ? "User"
                             : chatProvider.userEmail ?? "Guest"),
