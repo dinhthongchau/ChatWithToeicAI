@@ -11,15 +11,12 @@ dependencies:
     sdk: flutter
   google_generative_ai: ^0.4.6
   provider: ^6.1.2
-  hive_flutter: ^1.0.0
   shared_preferences: ^2.5.2
   flutter_dotenv: ^5.2.1
   fluttertoast: ^8.2.12 #hiển thị thông báo sau đó tự động tắt, khác với ShowDialog là user phải tắt
   flutter_markdown: ^0.6.17
   sqflite: ^2.3.0
-  uuid: ^4.2.1
   path: ^1.9.0
-  path_provider: ^2.1.1
   get: ^4.7.2
   intl: ^0.18.0
   lottie:
