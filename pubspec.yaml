@@ -26,6 +26,7 @@ dependencies:
   animated_splash_screen:
   flutter_launcher_icons: ^0.14.3
   flutter_tts: ^4.2.2
+  speech_to_text: ^7.0.0
 
 
 
