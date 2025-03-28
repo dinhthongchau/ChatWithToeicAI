@@ -1,9 +1,7 @@
 import 'package:ct312hm01_temp/core/enum/load_status.dart';
-import 'package:ct312hm01_temp/core/enum/load_tts_status.dart';
 import 'package:ct312hm01_temp/presentation/screens/auth/login_screen.dart';
 import 'package:ct312hm01_temp/presentation/screens/history/history_screen.dart';
 import 'package:ct312hm01_temp/provider/speech_to_text_provider.dart';
-import 'package:ct312hm01_temp/provider/text_to_speech_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../provider/history_visibility_provider.dart';
@@ -11,8 +9,6 @@ import '../../common_widgets/custom_loading_indicator.dart';
 import '../../../provider/chat_provider.dart';
 import '../../../provider/theme_provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
-
 import '../../common_widgets/custom_notice_snackbar.dart';
 import 'chat_message_item.dart';
 
@@ -312,8 +308,7 @@ class Body extends StatelessWidget {
     );
   }
 
-  Container buildContainerChatInputBox(
-      BuildContext context, void Function() sendMessage) {
+  Container buildContainerChatInputBox(BuildContext context, void Function() sendMessage) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(

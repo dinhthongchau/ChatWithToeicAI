@@ -1,8 +1,8 @@
-import 'package:ct312hm01_temp/presentation/screens/chat/chat_screen.dart';
+
 import 'package:ct312hm01_temp/provider/history_visibility_provider.dart';
+import 'package:ct312hm01_temp/provider/speech_to_text_provider.dart';
 import 'package:ct312hm01_temp/provider/text_to_speech_provider.dart';
 import 'package:ct312hm01_temp/services/chat_service.dart';
-import 'package:ct312hm01_temp/presentation/screens/auth/login_screen.dart';
 import 'package:ct312hm01_temp/provider/chat_provider.dart';
 import 'package:ct312hm01_temp/provider/theme_provider.dart';
 import 'package:ct312hm01_temp/splash_screen.dart';
@@ -68,7 +68,8 @@ class MyAppState extends State<MyApp> {
           create: (_) => AppAuthProvider(),
         ),
         ChangeNotifierProvider(create: (_) => HistoryVisibilityProvider()),
-        ChangeNotifierProvider(create: (_) => TextToSpeechProvider())
+        ChangeNotifierProvider(create: (_) => TextToSpeechProvider()),
+        ChangeNotifierProvider(create: (_) => SpeechToTextProvider())
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

@@ -72,7 +72,7 @@ class ChatProvider with ChangeNotifier {
   Future<void> loadSession(String sessionId) async {
     if (_userId == -1) return;
     _currentSessionId = sessionId;
-    _messages = await ChatDB.loadChatMessages(_userId!, sessionId);
+    _messages = await ChatDB.loadChatMessages(_userId, sessionId);
     notifyListeners();
   }
 
@@ -141,11 +141,6 @@ class ChatProvider with ChangeNotifier {
   // rename session chat
   Future<void> renameChatSession(
       String oldSessionId, String newSessionId) async {
-    if (_userId == null) {
-      print("Error: User ID is null. Cannot rename chat session.");
-      return;
-    }
-
     if (oldSessionId == newSessionId) {
       print("Warning: Old and new session IDs are the same. No rename needed.");
       return;
@@ -157,7 +152,7 @@ class ChatProvider with ChangeNotifier {
     }
 
     try {
-      await ChatDB.renameChatSession(_userId!, oldSessionId, newSessionId);
+      await ChatDB.renameChatSession(_userId, oldSessionId, newSessionId);
       if (_currentSessionId == oldSessionId) {
         _currentSessionId = newSessionId;
       }
@@ -172,8 +167,7 @@ class ChatProvider with ChangeNotifier {
 
   // Delete session chat
   Future<void> deleteChatSession(String sessionId) async {
-    if (_userId == null) return;
-    await ChatDB.deleteChatSession(_userId!, sessionId);
+    await ChatDB.deleteChatSession(_userId, sessionId);
     await loadChatHistory(); // Tải lại lịch sử chat để cập nhật danh sách
     if (_currentSessionId == sessionId) {
       _currentSessionId = null; // Xóa session hiện tại nếu nó bị xóa
@@ -214,9 +208,9 @@ void scrollToBottom(ScrollController scrollController) {
 
   // Tải tin nhắn từ session hiện tại
   Future<void> loadMessages() async {
-    if (_userId == null || _currentSessionId == null) return;
+    if (_currentSessionId == null) return;
     _messages.clear();
-    _messages =await ChatDB.loadChatMessages(_userId!, _currentSessionId!);
+    _messages =await ChatDB.loadChatMessages(_userId, _currentSessionId!);
     notifyListeners();
   }
 

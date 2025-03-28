@@ -27,7 +27,7 @@ class AnimatedSplashScreenWidget extends StatelessWidget {
         splashIconSize: double.infinity,
 
       nextScreen: _getNextScreen(),
-      duration: 4000,
+      duration: 2500,
       splashTransition: SplashTransition.fadeTransition,
     );
   }
