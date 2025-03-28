@@ -1,7 +1,7 @@
 ## Chat with TOEIC AI
 
 - This is a mobile application built with Flutter, utilizing the Gemini API for AI-powered TOEIC practice. It supports offline data storage with SQLite and is designed to enhance TOEIC skills through translations, grammar explanations, vocabulary, and test tips. The app is deployed as an APK for Android devices and features a responsive UI with Provider for state management.
-## Screenshots
+## Screenshots (Add Record and Listening, not Screenshots yet)
 ![image](https://github.com/user-attachments/assets/5daf7d84-7229-4a9e-baf9-bc2119281e26)
 
 ## Link APK && Youtube Demo: 
@@ -11,6 +11,7 @@
 ## Features
 - Log in or register with email and password, or use as a guest
 - Chat with AI to improve TOEIC skills (translations, grammar, vocabulary, tips)
+- Text to speech ,speech to text
 - View and manage chat history (rename, delete sessions)
 - Switch between light and dark themes
 - Access a user guide for instructions
