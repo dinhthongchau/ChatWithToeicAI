@@ -17,7 +17,6 @@ dependencies:
   flutter_markdown: ^0.6.17
   sqflite: ^2.3.0
   path: ^1.9.0
-  get: ^4.7.2
   intl: ^0.18.0
   lottie:
   animated_splash_screen:
